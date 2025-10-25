@@ -1,0 +1,7 @@
+{
+  "name": "aurkitu_front",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
