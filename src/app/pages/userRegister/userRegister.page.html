@@ -1,0 +1,17 @@
+<ion-content [fullscreen]="true">
+  <div class="contenido">
+    <ion-img src="../assets/logo/Logo_Circulo.png"></ion-img>
+    <h2>Registro</h2>
+    <!-- formulario con los datos necesarios para registrar un nuevo usuario, validación para cada campo-->
+    <form class="formulario" [formGroup]="formularioRegistro">
+        <ion-input fill="solid" type="text" required placeholder="Alias" [(ngModel)]="alias" name="alias" formControlName="alias"></ion-input>
+        
+        <ion-input fill="solid" type="email" required  placeholder="Correo electrónico" [(ngModel)]="email" name="email" formControlName="email"></ion-input>
+        <ion-input fill="solid" type="password" required required placeholder="Contraseña" [(ngModel)]="password" name="password" formControlName="password"></ion-input>
+    </form>
+
+    <ion-button expand="block" [disabled]="formularioRegistro.invalid" (click)="onSubmit()">
+      Registrar
+    </ion-button>
+  </div>
+</ion-content>

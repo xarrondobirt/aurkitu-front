@@ -2,10 +2,22 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-export const environment = {
-  production: false
+
+const getApiUrl = () => {
+  //  Android emulator 
+  if ((window as any).Capacitor?.getPlatform?.() === 'android') {
+    return 'http://10.0.2.2:8080';
+  }
+  
+
+  // Navegador
+  return 'http://localhost:8080';
 };
 
+export const environment = {
+  production: false,
+  apiUrl: getApiUrl()
+};
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.

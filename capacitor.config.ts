@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'aurkitu_front',
+  appId: 'io.birtlh.aurkitu',
+  appName: 'AurkiTU',
   webDir: 'www'
 };
 

@@ -1,6 +1,6 @@
 # www and android
-/android
 /www
+/android
 
 # Angular specific
 /dist/

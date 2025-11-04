@@ -1,0 +1,27 @@
+// Estilos para la página de Registro de usuarios. Indicamos las alineaciones y dimensiones
+.contenido{
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh; 
+}
+
+ion-img{
+    width: 60%;
+    max-width: 300px;
+    height: auto;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1000px;
+  }
+
+ion-button, ion-input{
+    width: 70%;
+    max-width: 500px;
+}
