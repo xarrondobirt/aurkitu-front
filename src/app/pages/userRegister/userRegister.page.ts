@@ -14,6 +14,7 @@ import { AlertController } from '@ionic/angular';
 
 // Página para el registro de un nuevo usuario. Obtención de inputs del usuario y verificación del correo vía servicio/backend
 export class UserRegisterPage {
+
   // inputs del formulario
   alias: string = '';
   email: string = '';
@@ -28,6 +29,15 @@ export class UserRegisterPage {
       message: 'Longitud del código innadecuada'
     }
   };
+  // caracteristicas de la contraseña para mostrar en el tooltip
+  literalesPassword = [
+     '6 caracteres',
+     'Mayúscula y minúscula',
+     'Número',
+     'Carácter especial'
+  ];
+
+
 
   // inyección de servicios y controladores
   constructor(private registroService: RegistroUsuarioService, private formBuilder: FormBuilder, private alertController: AlertController) {}
@@ -38,27 +48,39 @@ export class UserRegisterPage {
       alias: ['',
         [
           Validators.required,
-          Validators.pattern('^[a-zA-Z0-9_-]{3,15}$') 
+          Validators.pattern('^[a-zA-Z0-9_-]{3,50}$')  // 100 max length en BBDD - Username debe tener entre 3 y 50 caracteres en back
         ]
       ],
       email: ['',
         [
           Validators.required,
-          Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')
+          Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$') // 100 max length en BBDD
         ]
       ],
       password: ['',
         [
           Validators.required,
-          Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{6,}$')
+          Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{6,}$') // min 6 backend
         ]
       ]
     });
   }
   
-  // método asíncrono que recoge los datos necesarios para la request y realiza la llamada al servicio registroService para guardar los datos del usuario.
+  // método asíncrono que lleva el flujo de registro del usuario
   // Se muestran alertas para dar feedback al usuario
   async onSubmit() {
+    try{
+
+      const respuesta = await this.registrarUsuario(); 
+      await this.alertaVerificacion(respuesta);
+
+    }catch(error:any){
+
+      await this.alertaError(error);
+    }
+  }
+ // método asíncrono que recoge los datos necesarios para la request y realiza la llamada al servicio registroService para guardar los datos del usuario.
+  async registrarUsuario(): Promise<SetUserResponse>  {
     // recogida de parámetros para la request
     let request: SetUserRequest ={
       username: this.alias,
@@ -67,22 +89,20 @@ export class UserRegisterPage {
     };
 
     // llamada al servicio
-    let response: SetUserResponse;
-    console.log(request);
-    let responseObservable: Observable<SetUserResponse> = this.registroService.setUser(request);
-    
-    // obtención de los datos vía suscripción al observable
-    responseObservable.subscribe(datos =>{
-      response = datos;
-      console.log(response);
-      // se muestra la alerta de verificación con los datos de la respuesta
-      this.alertaVerificacion(response);
-    },
-    // en caso de error, se muestra una alerta con la información del error como feedback
-    (error) => {
-      console.error('Error', error);
-      this.alertaError(error);
-    },);
+    const promesa = new Promise<SetUserResponse>((resolve, reject) => {
+      this.registroService.setUser(request).subscribe({
+        next: (response: SetUserResponse) => {
+          console.log('Respuesta setUser:', response);
+          resolve(response);
+        },
+        error: (error) => {
+          console.error('Error setUser:', error);
+          reject(error);
+        },
+      });
+    });
+
+    return promesa;
   }
 
   // método asíncrono que muestra una alerta para introducir el código enviado al correo electrónico indicado para su validación
@@ -94,6 +114,7 @@ export class UserRegisterPage {
           name: 'entradaUsuario',
           type: 'text',
           placeholder: 'Indica el código de verificación',
+          cssClass: 'mayusculas'
         },
       ],
       buttons: [
@@ -104,19 +125,46 @@ export class UserRegisterPage {
         {
           text: 'Aceptar',
           // al aceptar, verificamos el código introducido por el usuario
-          handler: (input) => {
+          handler: async (input) => {
 
-            console.log('Input usuario', input.entradaUsuario);
+            console.log(input.entradaUsuario);
+            input.entradaUsuario = input.entradaUsuario.toUpperCase();
+            const acierto = await this.verificarEntradaUsuario(input, response);
 
-            this.verificarCodigo(response.id,input);
+            return acierto;
             
           },
         },
       ],
+      backdropDismiss: false,
     });
 
     await alert.present();
   }
+  async verificarEntradaUsuario(input: any, response: SetUserResponse): Promise<boolean> {
+    console.log('Input usuario', input.entradaUsuario);
+
+    try {
+    // validamos el formato
+    if (!input?.entradaUsuario || input.entradaUsuario.length !== 6) {
+      await this.alertaError(this.errorLongitud);
+      return false;
+    }
+
+    // llamamos al servicio
+    const verifyResponse = await this.verificarCodigo(response.id, input);
+
+    // mostraos la alerta correcta
+    await this.alertaCorrecto(verifyResponse);
+    return true; 
+
+    } catch (error) {
+      // en caso de error, mostramos la alerta de error y no cerraos la alerta de verificación
+      await this.alertaError(error);
+      return false; 
+    }    
+  }
+
   // método asíncrono que muestra una alerta para mostrar los mensajes de error
   async alertaError(error: any) {
     const alert = await this.alertController.create({
@@ -131,37 +179,31 @@ export class UserRegisterPage {
     await alert.present();
   }
   // método que valida el código introducido por el usuario vía servicio
-  verificarCodigo(idUser: number, inputCodigo: any) {
-    // los códigos tienen una longitud de 6 
-    if(inputCodigo.entradaUsuario.length == 6){
-      // se introducen los datos de la request
-      let request: VerifyEmailRequest = {
-        idUsuario: idUser,
-        codigoVerificacion: inputCodigo.entradaUsuario
-      };
-
-      // llamamos al servicio de vrificación del email
-      let response: VerifyEmailResponse;
-      console.log(request);
-      let responseObservable: Observable<VerifyEmailResponse> = this.registroService.verifyEmail(request);
-      
-      // nos suscribimos al observable para obtener el resultado del servicio
-      responseObservable.subscribe(datos =>{
-        response = datos;
-        console.log(response);
-        // mostramos una alerta con el feedback
-        this.alertaCorrecto(response);
-      },
-      // en caso de error, mostramos una alerta con información adicional
-      (error) => {
-        console.error('Error', error);
-        this.alertaError(error);
-      },);
-
-    }else{
-      // si no cumple con la longitud establecida, mostramos una alerta con la información
-      this.alertaError(this.errorLongitud);
-    }
+  async verificarCodigo(idUser: number, inputCodigo: any) {
+    // construimos la request
+    const request: VerifyEmailRequest = {
+      idUsuario: idUser,
+      codigoVerificacion: inputCodigo.entradaUsuario
+    };
+  
+    console.log('Request verifyEmail', request);
+  
+    // llamamos al servicio
+    const promesa = new Promise<VerifyEmailResponse>((resolve, reject) => {
+      this.registroService.verifyEmail(request).subscribe({
+        next: (response: VerifyEmailResponse) => {
+          console.log('Response verifyEmail:', response);
+          resolve(response);
+        },
+        error: (error) => {
+          console.error('Error verifyEmail:', error);
+          reject(error);
+        }
+      });
+    });
+  
+    // devolvemos la promesa
+    return promesa;
   }
 
   // método asíncrono que muestra la respuesta del servicio cuando no ha habido errores
