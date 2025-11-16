@@ -1,0 +1,27 @@
+
+<ion-content [fullscreen]="true">
+  <div class="contenido">
+    <ion-img src="../assets/logo/Logo_Circulo.png"></ion-img>
+    <h2>Login</h2>
+    <!-- Formulario login -->
+    <form class="formulario" [formGroup]="formularioLogin">
+        <ion-input fill="solid" type="text" required placeholder="Usuario" [(ngModel)]="user" name="user" formControlName="user"></ion-input>
+        <ion-input fill="solid" type="password" required required placeholder="Contraseña" [(ngModel)]="password" name="password" formControlName="password"></ion-input>
+    </form>
+    <!-- Botón inicio-->
+    <ion-button expand="block" [disabled]="formularioLogin.invalid" (click)="onSubmit()">
+      Entrar
+    </ion-button>
+    <!-- Enlaces recordar password + registro -->
+    <div class="enlaces">
+      <ion-router-link routerLink="/forgotPassword">
+        ¿Olvidaste tu contraseña?
+      </ion-router-link>
+    </div>
+    <div>
+      <ion-router-link routerLink="/userRegister">
+        Registrarse
+      </ion-router-link>
+    </div>
+  </div>
+</ion-content>

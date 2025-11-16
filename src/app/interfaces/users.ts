@@ -18,3 +18,12 @@ export interface VerifyEmailRequest{
 export interface VerifyEmailResponse{
     mensaje: string
 }
+
+export interface SetLoginRequest{
+    username: string,
+    password: string
+}
+
+export interface SetLoginResponse{
+    mensaje: string
+}
