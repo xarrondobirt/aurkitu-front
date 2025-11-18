@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AlertController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-userRegister',
@@ -40,7 +41,7 @@ export class UserRegisterPage {
 
 
   // inyección de servicios y controladores
-  constructor(private registroService: RegistroUsuarioService, private formBuilder: FormBuilder, private alertController: AlertController) {}
+  constructor(private registroService: RegistroUsuarioService, private formBuilder: FormBuilder, private alertController: AlertController, private router: Router) {}
 
   // método al iniciar que incluye las validaciones de los inputs del usuario en el formulario.
   ngOnInit() {
@@ -214,7 +215,8 @@ export class UserRegisterPage {
         {
           text: 'Aceptar',
           handler: () => {
-            // TODO - ¿qué hacer cuando el código es correcto?
+            // llevar a la pagina de login
+            this.router.navigate(['/login']);
           },
         },
       ],
