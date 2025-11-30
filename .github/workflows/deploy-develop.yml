@@ -10,7 +10,7 @@ env:
   # Para modificar lo que haya en el código antes del build (tipicamente http://localhost:8080) y apuntar al servidor de desarrollo
   API_URL: "https://673bd45f-8f51-4f9e-bfdf.ad161612c2a6.pc.birt.eus"
   # Carpeta donde debe acabar el código compilado en el servidor remoto
-  #DEPLOY_PATH: "/opt/aurkitu/frontend-dist"
+  DEPLOY_PATH: "/opt/aurkitu/frontend-dist"
 
 jobs:
   # JOB 1: CI - Build en la Nube
@@ -45,9 +45,34 @@ jobs:
         # Podría haber un script "build-prod" en el proyecto, no lo veo ...
         run: npm run build -- --configuration production
 
-      - name: Upload Artifact
+      - name: Upload Artifact # sube el código compilado para el siguiente Job
         uses: actions/upload-artifact@v4
         with:
-          name: frontend-build
+          name: frontend-build # nombre del artifact
           path: www/  # Ionic genera 'www' a diferencia de Angular puro: 'dist'
           retention-days: 1
+
+  # JOB 2: CD - Despliegue en Servidor
+  deploy-server:
+    needs: build-cloud
+    runs-on: self-hosted
+    # TRUCO DE SEGURIDAD:
+    # Solo desplegamos si el push es a 'develop'.
+    # Ahora, para probar, le añado un excecpión con la rama feature/ci-*
+    #if: success() && github.ref == 'refs/heads/develop'
+    if: success() && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/ci-')) # para probar haciendo simplemente push en la rama donde estoy desarrollando el ci-cd
+
+    steps:
+      - name: Download Artifact # el código compilado en el Job 1
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build # nombre del artifact a descargar
+          path: /tmp/frontend-update # dónde dejar el código descargado
+
+      - name: Deploy to Nginx Path # copia el código al directorio de despliegue
+        run: |
+          echo "Iniciando despliegue en ${{ env.DEPLOY_PATH }}..."
+          rm -rf ${{ env.DEPLOY_PATH }}/*
+          cp -r /tmp/frontend-update/* ${{ env.DEPLOY_PATH }}/
+          rm -rf /tmp/frontend-update
+          echo "Despliegue finalizado."
