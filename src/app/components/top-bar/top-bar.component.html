@@ -1,0 +1,8 @@
+<ion-toolbar>
+  <ion-buttons slot="end">
+    <ion-button>
+      <ion-img src="../assets/icon/icono_sobre.png" class="imgMensaje" *ngIf="this.mensajesPendientes == 0" (click)="this.goMensajes()"></ion-img>
+      <ion-img src="../assets/icon/icono_sobre_notificacion.png" class="imgMensaje" *ngIf="this.mensajesPendientes > 0" (click)="this.goMensajes()"></ion-img>
+    </ion-button>
+  </ion-buttons>
+</ion-toolbar>

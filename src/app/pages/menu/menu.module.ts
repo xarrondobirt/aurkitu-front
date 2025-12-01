@@ -2,16 +2,16 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { Tab3Page } from './tab3.page';
+import { MenuPage } from './menu.page';
 import { RouterModule, Routes } from '@angular/router';
 import { OwnComponentsModule } from "src/app/components/own-components.module";
 
 const routes: Routes = [
-  { path: '', component: Tab3Page }
+  { path: '', component: MenuPage }
 ];
 
 @NgModule({
-  declarations: [Tab3Page],
-  imports: [CommonModule, FormsModule, IonicModule, RouterModule.forChild(routes), OwnComponentsModule]
+  declarations: [MenuPage],
+  imports: [CommonModule, FormsModule, RouterModule.forChild(routes), OwnComponentsModule, IonicModule]
 })
-export class Tab2PageModule {}
+export class MenuPageModule {}

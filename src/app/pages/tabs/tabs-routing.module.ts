@@ -8,13 +8,17 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'registerUser',
+        path: 'userRegister',
         loadChildren: () => import('../userRegister/userRegister.module').then(m => m.UserRegisterPageModule)
       },
       {
         path: '',
         redirectTo: '/tabs/userRegister',
         pathMatch: 'full'
+      },
+      {
+        path: 'menu',
+        loadChildren: () => import('../menu/menu.module').then(m => m.MenuPageModule)
       },
     ]
   },
