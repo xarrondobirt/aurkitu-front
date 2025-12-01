@@ -1,0 +1,27 @@
+// Estilos para la página del menu. Indicamos las alineaciones y dimensiones
+.contenido{
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 70%;
+}
+
+ion-img{
+    width: 60%;
+    max-width: 300px;
+    height: auto;
+}
+
+ion-button, ion-input{
+    width: 70%;
+    max-width: 500px;
+}
+
+
+    
+.imagen{
+    width: 10%;
+    max-width: 40px;
+    height: auto;
+}

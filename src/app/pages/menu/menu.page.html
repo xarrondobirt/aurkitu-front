@@ -1,0 +1,18 @@
+<ion-content [fullscreen]="true">
+  <!-- componente personalizado para la cabecera-->
+  <app-top-bar></app-top-bar>
+  <div class="contenido">
+    <ion-img src="../assets/logo/Logo_Circulo.png"></ion-img>
+    <h2>Bienvenido/a, {{this.alias}}</h2> <!-- añadir el alias del usuario-->
+    <!-- botón que lleva al registro de objetos perdidos-->
+    <ion-button expand="block" (click)="this.goLostRegister()">
+      <ion-img src="../assets/icon/lupa_blanca.png" class="imagen"></ion-img>
+       He perdido algo
+    </ion-button>
+     <!-- botón que lleva al catalogo de objetos perdidos-->
+    <ion-button expand="block" (click)="this.goLostCatalog()">
+      <ion-img src="../assets/icon/caja_blanca.png" class="imagen"></ion-img>
+       Objetos perdidos
+    </ion-button>
+  </div>
+</ion-content>

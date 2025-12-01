@@ -10,7 +10,7 @@
         <ion-input fill="solid" type="email" required  placeholder="Correo electrónico" [(ngModel)]="email" name="email" formControlName="email"></ion-input>
         <ion-label *ngIf="formularioRegistro.get('email')?.invalid && formularioRegistro.get('email')?.touched" color="danger">Introduce un email válido</ion-label>
 
-        <ion-input fill="solid" type="password" required required placeholder="Contraseña" [(ngModel)]="password" name="password" formControlName="password"></ion-input>
+        <ion-input fill="solid" type="password" required  placeholder="Contraseña" [(ngModel)]="password" name="password" formControlName="password"></ion-input>
         <div *ngIf="formularioRegistro.get('password')?.invalid && formularioRegistro.get('password')?.touched">
           <ion-label class="ion-padding" *ngFor="let literal of this.literalesPassword" color="danger">
             {{literal}}
