@@ -52,7 +52,7 @@ jobs:
           path: www/  # Ionic genera 'www' a diferencia de Angular puro: 'dist'
           retention-days: 1
 
-  # JOB 2: CD - Despliegue en Servidor
+  # JOB 2: CD - Despliegue en Servidor (prueba)
   deploy-server:
     needs: build-cloud
     runs-on: self-hosted
