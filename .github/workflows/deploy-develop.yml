@@ -58,9 +58,9 @@ jobs:
     runs-on: self-hosted
     # TRUCO DE SEGURIDAD:
     # Solo desplegamos si el push es a 'develop'.
-    # Ahora, para probar, le añado un excecpión con la rama feature/ci-*
-    #if: success() && github.ref == 'refs/heads/develop'
-    if: success() && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/ci-')) # para probar haciendo simplemente push en la rama donde estoy desarrollando el ci-cd
+    if: success() && github.ref == 'refs/heads/develop'
+    # Antes, para probar, le añadí un excecpión con la rama feature/ci-*
+    # if: success() && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/ci-')) # para probar haciendo simplemente push en la rama donde estoy desarrollando el ci-cd
 
     steps:
       - name: Download Artifact # el código compilado en el Job 1
