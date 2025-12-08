@@ -19,6 +19,13 @@ export interface VerifyEmailResponse{
     mensaje: string
 }
 
+export interface LogoutRequest{
+    accessToken: string
+}
+
+export interface LogoutResponse{
+    status: string
+}
 export interface SetLoginRequest{
     username: string,
     password: string

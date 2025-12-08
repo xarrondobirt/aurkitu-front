@@ -1,8 +1,16 @@
 <ion-toolbar>
+  <ion-buttons slot="start">
+    <ion-button>
+      <ion-img src="../assets/icon/logout.png" class="imagen"  (click)="this.logout()" alt="imagen logout"></ion-img>
+    </ion-button>
+    <ion-button>
+      <ion-img src="../assets/icon/casa.png" class="imagen"  (click)="this.goMenu()" alt="imagen casa menu"></ion-img>
+    </ion-button>
+  </ion-buttons>
   <ion-buttons slot="end">
     <ion-button>
-      <ion-img src="../assets/icon/icono_sobre.png" class="imgMensaje" *ngIf="this.mensajesPendientes == 0" (click)="this.goMensajes()"></ion-img>
-      <ion-img src="../assets/icon/icono_sobre_notificacion.png" class="imgMensaje" *ngIf="this.mensajesPendientes > 0" (click)="this.goMensajes()"></ion-img>
+      <ion-img src="../assets/icon/sobre.png" class="imagen" *ngIf="this.mensajesPendientes == 0" (click)="this.goMensajes()" alt="imagen sin mensajes pendientes"></ion-img>
+      <ion-img src="../assets/icon/sobre_notificacion.png" class="imagen"  *ngIf="this.mensajesPendientes > 0" (click)="this.goMensajes()" alt="imagen con mensajes pendientes"></ion-img>
     </ion-button>
   </ion-buttons>
 </ion-toolbar>
