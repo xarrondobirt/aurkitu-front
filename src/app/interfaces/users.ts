@@ -34,3 +34,22 @@ export interface SetLoginRequest{
 export interface SetLoginResponse{
     mensaje: string
 }
+
+export interface ResetPassRequest{
+    email: string,
+    nuevaPassword: String,
+    repitePassword: String,
+    codVerificacion: String
+}
+
+export interface ResetPassResponse{
+    mensaje: string
+}
+
+export interface RecuperarPassRequest{
+    email: string
+}
+
+export interface RecuperarPassResponse{
+    mensaje: string
+}

@@ -13,7 +13,7 @@
 
 # Node modules and dependency files
 /node_modules/
-/package-lock.json
+#/package-lock.json no tenerlo en el repo rompe el workflow (npm ci)
 /yarn.lock
 
 # Environment files

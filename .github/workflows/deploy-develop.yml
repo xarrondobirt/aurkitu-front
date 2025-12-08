@@ -1,0 +1,78 @@
+name: Desplegar al servidor de desarrollo (develop)
+
+on:
+  push:
+    branches:
+      - "develop"         # Queremos despliegue cuando se haga push a develop
+      - "feature/**"      # Para ir probando antes usando una rama inermedia
+
+env:
+  # Para modificar lo que haya en el código antes del build (tipicamente http://localhost:8080) y apuntar al servidor de desarrollo
+  API_URL: "https://673bd45f-8f51-4f9e-bfdf.ad161612c2a6.pc.birt.eus"
+  # Carpeta donde debe acabar el código compilado en el servidor remoto
+  DEPLOY_PATH: "/opt/aurkitu/frontend-dist"
+
+jobs:
+  # JOB 1: CI - Build en la Nube
+  build-cloud:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          # Usa la versión que veo en package.json del proyecto Ionic/Angular
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Inject API URL
+        run: |
+          echo "Generando environment.prod.ts..."
+          cat <<EOF > src/environments/environment.prod.ts
+          export const environment = {
+            production: true,
+            apiUrl: '${{ env.API_URL }}'
+          };
+          EOF
+
+      - name: Build Angular (Production)
+        # Podría haber un script "build-prod" en el proyecto, no lo veo ...
+        run: npm run build -- --configuration production
+
+      - name: Upload Artifact # sube el código compilado para el siguiente Job
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build # nombre del artifact
+          path: www/  # Ionic genera 'www' a diferencia de Angular puro: 'dist'
+          retention-days: 1
+
+  # JOB 2: CD - Despliegue en Servidor (prueba)
+  deploy-server:
+    needs: build-cloud
+    runs-on: self-hosted
+    # TRUCO DE SEGURIDAD:
+    # Solo desplegamos si el push es a 'develop'.
+    if: success() && github.ref == 'refs/heads/develop'
+    # Antes, para probar, le añadí un excecpión con la rama feature/ci-*
+    # if: success() && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/ci-')) # para probar haciendo simplemente push en la rama donde estoy desarrollando el ci-cd
+
+    steps:
+      - name: Download Artifact # el código compilado en el Job 1
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build # nombre del artifact a descargar
+          path: /tmp/frontend-update # dónde dejar el código descargado
+
+      - name: Deploy to Nginx Path # copia el código al directorio de despliegue
+        run: |
+          echo "Iniciando despliegue en ${{ env.DEPLOY_PATH }}..."
+          rm -rf ${{ env.DEPLOY_PATH }}/*
+          cp -r /tmp/frontend-update/* ${{ env.DEPLOY_PATH }}/
+          rm -rf /tmp/frontend-update
+          echo "Despliegue finalizado."
