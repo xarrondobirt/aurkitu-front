@@ -18,3 +18,11 @@ export interface VerifyEmailRequest{
 export interface VerifyEmailResponse{
     mensaje: string
 }
+
+export interface LogoutRequest{
+    accessToken: string
+}
+
+export interface LogoutResponse{
+    status: string
+}
