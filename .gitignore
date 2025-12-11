@@ -1,6 +1,7 @@
 # www and android
 /www
 /android
+/ios
 
 # Angular specific
 /dist/
@@ -30,3 +31,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+#Archivos de sistema locales de Android
+local.properties
+.gradle/
