@@ -1,0 +1,82 @@
+// Estilos de la página Mensajes
+
+.contenidoChat{
+    background: #fdf9f4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 78%; 
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.mensajesChat{
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.mensaje{
+    border-radius: 10px;
+    height: 10%;
+    width: 50%;
+    padding: 1%;
+    margin-top:3%;
+    margin-left: 3%;
+}
+
+.hora{
+    align-items: end;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+    font-style: italic;
+}
+
+.usuarioEncontrado{
+    justify-content: flex-start;
+    .mensaje{
+        background-color: #EC7445;
+        color: #f6f1f1;
+        border: 1px solid #f6f1f1;
+    }
+}
+
+.usuarioPerdido{
+    margin-left: 50%;
+    width: 90%;
+    .mensaje{
+        background-color: #f6f1f1;
+        color: #EC7445;
+        border: 1px solid #EC7445;
+    }
+}
+
+ion-header{
+    background: #EC7445;
+}
+
+ion-title{
+    text-align: center;
+    font-weight:bold;
+}
+
+ion-button{
+    background: #EC7445;
+    color: #ffffff;
+    max-width: 100px;
+    border-radius: 20px;
+}
+
+ion-input{
+    margin-left: 5%;
+    min-width: 100px;
+}
+
+ion-footer{
+    display: flex;
+    flex-direction: row;
+    border-top: 1px solid #ddd;
+}

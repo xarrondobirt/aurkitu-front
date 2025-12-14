@@ -1,0 +1,33 @@
+<ion-content [fullscreen]="true">
+  <!-- componente personalizado para la cabecera-->
+  <app-top-bar></app-top-bar>
+
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Chat con {{this.alias}}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <!-- caja que incluye los mensajes y el footer-->
+  <div class="contenidoChat">
+    <!-- mensajes intercambiados por el usuario logeado con otro usuario-->
+    <div class="mensajesChat">
+      <div *ngFor="let mens of this.listaMensajes">
+        <!-- izquierda los mensajes del usuario no logeado-->
+        <div class="usuarioEncontrado" *ngIf="mens.remitente.username == this.alias">
+          <div  class="mensaje">{{mens.contenido}}</div>
+          <div class="hora">{{mens.createDate | date:'dd/MM/yyyy HH:mm' }}</div>
+        </div>
+        <!-- derecha los mensajes del usuario logeado-->
+        <div class="usuarioPerdido" *ngIf="mens.remitente.username != this.alias">
+          <div  class="mensaje">{{mens.contenido}}</div>
+          <div class="hora">{{mens.createDate | date:'dd/MM/yyyy HH:mm' }} </div>
+        </div>
+      </div>
+    </div>
+    <ion-footer>
+      <!-- opcion para enviar un nuevo mensaje-->
+      <ion-input placeholder="Escriba un nuevo mensaje" [(ngModel)]="this.mensajeNuevo"></ion-input>
+      <ion-button (click)="this.enviarMensaje(this.mensajeNuevo)">Enviar</ion-button>
+    </ion-footer>
+  </div>
+</ion-content>

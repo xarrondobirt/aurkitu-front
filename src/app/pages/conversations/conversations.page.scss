@@ -1,0 +1,37 @@
+// Estilos para la página de las conversaciones
+
+.contenido{
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.logo{
+    width: 70%;
+    max-width: 300px;
+    height: auto;
+}
+
+.mensajes{
+    width: 80%;
+    max-width: 800px;
+    min-width: 100px;
+}
+
+.carta{
+    width: 70%;
+    max-width: 50px;
+    height: auto;
+}
+
+.noConversacion{
+    text-align: center;
+}
+
+ion-row {
+    border-bottom: 1px solid var(--ion-color-light);
+}
+
+ion-card-title{
+    text-align: center;
+}

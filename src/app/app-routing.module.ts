@@ -12,12 +12,13 @@ const routes: Routes = [
   {
     path: 'forgot-password',
     loadChildren: () => import('./pages/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
-  },  {
+  },
+  {
     path: 'reset-password',
     loadChildren: () => import('./pages/reset-password/reset-password.module').then( m => m.ResetPasswordPageModule)
-  }
-
-
+  },
+  { path: 'conversations', loadChildren: () => import('./pages/conversations/conversations.module').then(m => m.ConversationsPageModule)},
+  { path: 'messages', loadChildren: () => import('./pages/messages/messages.module').then(m => m.MessagesPageModule)},
 ];
 
 @NgModule({

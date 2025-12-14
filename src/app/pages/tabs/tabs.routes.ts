@@ -17,11 +17,6 @@ export const routes: Routes = [
           import('../menu/menu.page').then((m) => m.MenuPage),
       },
       {
-        path: 'tab3',
-        loadComponent: () =>
-          import('../tab3/tab3.page').then((m) => m.Tab3Page),
-      },
-      {
         path: '',
         redirectTo: '/tabs/userRegister',
         pathMatch: 'full',

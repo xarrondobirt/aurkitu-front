@@ -25,8 +25,8 @@ export class TopBarComponent  implements OnInit {
     //llamar al servicio y obtener el número para guardarlo en la variable mensajes pendientes
   }
   goMensajes() {
-    // TODO - llevar a la pagina de mensajes
-    // this.router.navigate(['/messages'])
+    // TODO - llevar a la pagina de conversaciones si hay mensajes pendientes
+    this.router.navigate(['/conversations']);
   }
   // método para cerrar sesión y llevar a la página de login
   async logout() {

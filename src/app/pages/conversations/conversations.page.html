@@ -1,0 +1,39 @@
+<ion-content [fullscreen]="true">
+  <!-- componente personalizado para la cabecera-->
+  <app-top-bar></app-top-bar>
+  <div class="contenido">
+    <ion-img src="../assets/logo/Logo_Circulo.png" class="logo"></ion-img> 
+    <!-- ion card que incluye un ion grid con el listado de las conversaciones objenidas-->
+    <ion-card  class="mensajes">
+      <ion-card-header>
+        <ion-card-title>Conversaciones</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row *ngIf="this.listaConversaciones.length > 0">
+            <ion-col size="4">Estado</ion-col>
+            <ion-col size="4">Usuario</ion-col>
+            <ion-col size="4">Último mensaje</ion-col>
+          </ion-row>
+          <ion-row *ngFor="let conver of this.listaConversaciones" (click)="this.verConversacion(conver)">
+            <ion-col size="4"> 
+              <!-- dependiendo de si hay mensajes pendientes, se muestra un icono u otro-->
+              <ion-img src="../assets/icon/sobre.png" class="imagen" *ngIf="conver.mensajesSinLeer == false" class="carta" alt="imagen sin mensajes pendientes"></ion-img>
+              <ion-img src="../assets/icon/sobre_notificacion.png" class="imagen" *ngIf="conver.mensajesSinLeer == true" class="carta" alt="imagen con mensajes pendientes"></ion-img>
+            </ion-col>
+            <ion-col size="4">
+              <ion-label>{{conver.participante.username}}</ion-label>
+            </ion-col>
+            <ion-col size="4"> 
+              <ion-label>{{conver.lastUpdateDate | date:'dd/MM/yyyy HH:mm' }}</ion-label>
+            </ion-col>
+          </ion-row>
+          <!-- si no hay conversaciones, se muestra el siguiente mensaje-->
+          <ion-row *ngIf="this.listaConversaciones.length == 0">
+            <ion-col size="12" class="noConversacion">No tiene ninguna conversación disponible</ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
