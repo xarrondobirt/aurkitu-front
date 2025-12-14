@@ -224,4 +224,9 @@ export class UserRegisterPage {
 
     await alert.present();
   }
+
+  // método para llevar a la página del login
+  goLogin() {
+    this.router.navigate(['/login']);
+  }
 }
