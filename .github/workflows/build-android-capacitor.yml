@@ -1,4 +1,4 @@
-name: Generar App Android (APK + AAB) - disparo manual
+name: Generar App Android (APK + AAB) - ejecución manual
 
 on:
   workflow_dispatch: # Disparo manual desde GitHub
