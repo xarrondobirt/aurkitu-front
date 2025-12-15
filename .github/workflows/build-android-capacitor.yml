@@ -17,7 +17,7 @@ env:
 
 jobs:
   build-android:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Usamoas una maquina de GitHub para hacer el build
 
     steps:
       # Clonamos el código (desde la rama que el usuario indique al ejecutar el workflow)
