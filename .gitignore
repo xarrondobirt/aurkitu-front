@@ -35,3 +35,8 @@ yarn-error.log*
 #Archivos de sistema locales de Android
 local.properties
 .gradle/
+
+#Keystores
+*.jks
+*.keystore
+keystore_base64.txt
