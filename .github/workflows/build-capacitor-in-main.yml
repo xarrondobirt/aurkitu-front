@@ -13,9 +13,7 @@ env:
   KEYSTORE_PATH: "android/release.keystore"
   # Ruta en el servidor donde se subirá el APK
   DEPLOY_PATH_MOBILE: "/docker_data/uploads/mobile"
-  DOWNLOAD_BASE_URL: "${{ env.API_URL }}/uploads/mobile"
   BUILD_TYPE: "release"
-
 
 jobs:
   build-android:
@@ -125,9 +123,11 @@ jobs:
       - name: Move to Uploads Folder
         run: |
           echo "Moviendo APK a ${{ env.DEPLOY_PATH_MOBILE }}..."
+          APK_FILENAME="aurkitu-v${{ github.run_number }}-${{ inputs.build_type }}.apk"
+          DEST_FILE="${{ env.DEPLOY_PATH_MOBILE }}/$APK_FILENAME"
 
           # Usamos find porque el nombre original puede variar
-          find /tmp/mobile-update -name "*.apk" -exec cp {} ${{ env.DEPLOY_PATH_MOBILE }}/aurkitu-v${{ github.run_number }}-${{env.BUILD_TYPE}}.apk \;
+          find /tmp/mobile-update -name "*.apk" -exec cp {} $DEST_FILE \;
           # Busca el APK y ejecuta -exec, copiando {} que se sustituye por el nombre del archivo encontrado en la ruta destino renombrado con la versión
           # Limpieza temporal
           rm -rf /tmp/mobile-update
@@ -135,7 +135,7 @@ jobs:
           echo "APK disponible en el servidor"
           ls -lh ${{ env.DEPLOY_PATH_MOBILE }}
 
-          DOWNLOAD_URL="${{ env.DOWNLOAD_BASE_URL }}/$APK_FILENAME"
+          DOWNLOAD_URL="${{ env.API_URL }}/uploads/mobile/$APK_FILENAME"
 
           echo "Despliegue completado."
           echo "::notice title=APK Disponible::Descarga la App aquí: $DOWNLOAD_URL" # notice para que se vea en GitHub
