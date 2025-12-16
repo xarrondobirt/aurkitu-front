@@ -56,9 +56,15 @@ jobs:
       - name: Build Angular (Production)
         run: npm run build -- --configuration production
 
-      # 3. Copiar carpeta www a carpeta Android para que lo use Capacitor
-      - name: Sync Capacitor
-        run: npx cap sync android
+      # 7. Inicializar y Sincronizar Capacitor (Web -> Nativo)
+      - name: Add & Sync Android Platform
+        run: |
+          # Primero instalamos la dependencia de android si no está
+          npm install @capacitor/android
+          # Añadimos la plataforma (crea la carpeta android/)
+          npx cap add android
+          # Sincronizamos la web compilada
+          npx cap sync android
 
       # 4. Versionado Automático
       # Usamos el número de ejecución de GitHub como VersionCode (se incrementa solo cada vez que se lanza el workflow)
