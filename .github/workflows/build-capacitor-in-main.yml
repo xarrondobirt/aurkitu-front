@@ -1,0 +1,128 @@
+name: Generar App Android (APK + AAB) - ejecución manual
+
+on:
+  workflow_dispatch: # Disparo manual desde GitHub
+    inputs: # Para pedir parámetros al usuario que lance el workflow
+      release_notes:
+        description: 'Comentarios sobre la versión (Opcional)'
+        required: false
+
+env:
+  API_URL: "https://673bd45f-8f51-4f9e-bfdf.ad161612c2a6.pc.birt.eus"
+  # Ruta donde Gradle esperará el keystore temporal, que sacaremos de Secrets
+  KEYSTORE_PATH: "android/release.keystore"
+  # Ruta en el servidor donde se subirá el APK
+  DEPLOY_PATH_MOBILE: "/docker_data/uploads/mobile"
+  BUILD_TYPE: "release"
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest # Usamoas una maquina de GitHub para hacer el build
+
+    steps:
+      # Clonamos el código (desde la rama que el usuario indique al ejecutar el workflow)
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Hace falta Java para compilar Android
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17' # Android 13+ requiere Java 17
+
+      # 3. Configurar Node.js (IGUAL QUE FRONT)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 4. Install Dependencies (IGUAL QUE FRONT)
+      - name: Install Dependencies
+        run: npm ci
+
+      # 5. Inject API URL (IGUAL QUE FRONT)
+      - name: Inject API URL
+        run: |
+          echo "Generando environment.prod.ts..."
+          cat <<EOF > src/environments/environment.prod.ts
+          export const environment = {
+            production: true,
+            apiUrl: '${{ env.API_URL }}'
+          };
+          EOF
+
+      # 6. Build Angular (IGUAL QUE FRONT)
+      - name: Build Angular (Production)
+        run: npm run build -- --configuration production
+
+      # 3. Copiar carpeta www a carpeta Android para que lo use Capacitor
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      # 4. Versionado Automático
+      # Usamos el número de ejecución de GitHub como VersionCode (se incrementa solo cada vez que se lanza el workflow)
+      # Se resetearía si cambiamos el nombre del workflow!!
+      - name: Update Version Code
+        working-directory: android/app
+        run: |
+          echo "Actualizando versión a: ${{ github.run_number }}"
+          # sed busca 'versionCode 1' y lo cambia por el número real
+          sed -i "s/versionCode 1/versionCode ${{ github.run_number }}/g" build.gradle
+          # Actualiza el nombre visible a 1.0.X
+          sed -i "s/versionName \"1.0\"/versionName \"1.0.${{ github.run_number }}\"/g" build.gradle
+
+      # 5. Preparar Keystore (Desde Secrets)
+      - name: Decode Keystore
+        run: |
+          # Decodifica el base64 del secreto y crea el archivo físico
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > ${{ env.KEYSTORE_PATH }}
+
+      # 6. Compilación Gradle (APK + AAB)
+      # Ejecutamos las dos tareas a la vez: assembleRelease (APK) y bundleRelease (AAB)
+      - name: Build with Gradle
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease bundleRelease \
+            -Pandroid.injected.signing.store.file=$(pwd)/../${{ env.KEYSTORE_PATH }} \
+            -Pandroid.injected.signing.store.password=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} \
+            -Pandroid.injected.signing.key.alias=${{ secrets.ANDROID_KEY_ALIAS }} \
+            -Pandroid.injected.signing.key.password=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+
+      # 6. Subir Artifact al almacenamiento de GitHub (Para pasárselo al siguiente Job o descargarlo nosotros)
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-artifact
+          path: android/app/build/outputs/apk/${{env.BUILD_TYPE}}/*.apk
+          retention-days: 1
+
+  # ------------------------------------------------------------------
+  # JOB 2: DEPLOY (Pasarlo al servidor)
+  # El runner self-hosted descarga el archivo APK y lo mueve a la carpeta de uploads
+  # ------------------------------------------------------------------
+  deploy-local:
+    needs: build-android # Espera a que el build termine
+    runs-on: self-hosted # Usa el self-hosted runner del front
+    if: success() # Solo si el build fue OK
+
+    steps:
+      - name: Download APK Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: apk-artifact
+          path: /tmp/mobile-update
+
+      - name: Move to Uploads Folder
+        run: |
+          echo "Moviendo APK a ${{ env.DEPLOY_PATH_MOBILE }}..."
+
+          # Usamos find porque el nombre original puede variar
+          find /tmp/mobile-update -name "*.apk" -exec cp {} ${{ env.DEPLOY_PATH_MOBILE }}/aurkitu-v${{ github.run_number }}-${{env.BUILD_TYPE}}.apk \;
+          # Busca el APK y ejecuta -exec, copiando {} que se sustituye por el nombre del archivo encontrado en la ruta destino renombrado con la versión
+          # Limpieza temporal
+          rm -rf /tmp/mobile-update
+
+          echo "APK disponible en el servidor"
+          ls -lh ${{ env.DEPLOY_PATH_MOBILE }}
