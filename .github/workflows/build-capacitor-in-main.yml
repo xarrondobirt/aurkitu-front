@@ -123,7 +123,7 @@ jobs:
       - name: Move to Uploads Folder
         run: |
           echo "Moviendo APK a ${{ env.DEPLOY_PATH_MOBILE }}..."
-          APK_FILENAME="aurkitu-v${{ github.run_number }}-${{ inputs.build_type }}.apk"
+          APK_FILENAME="aurkitu-v${{ github.run_number }}-${{ env.BUILD_TYPE }}.apk"
           DEST_FILE="${{ env.DEPLOY_PATH_MOBILE }}/$APK_FILENAME"
 
           # Usamos find porque el nombre original puede variar
