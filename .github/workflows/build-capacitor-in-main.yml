@@ -13,7 +13,9 @@ env:
   KEYSTORE_PATH: "android/release.keystore"
   # Ruta en el servidor donde se subirá el APK
   DEPLOY_PATH_MOBILE: "/docker_data/uploads/mobile"
+  DOWNLOAD_BASE_URL: "${{ env.API_URL }}/uploads/mobile"
   BUILD_TYPE: "release"
+
 
 jobs:
   build-android:
@@ -132,3 +134,9 @@ jobs:
 
           echo "APK disponible en el servidor"
           ls -lh ${{ env.DEPLOY_PATH_MOBILE }}
+
+          DOWNLOAD_URL="${{ env.DOWNLOAD_BASE_URL }}/$APK_FILENAME"
+
+          echo "Despliegue completado."
+          echo "::notice title=APK Disponible::Descarga la App aquí: $DOWNLOAD_URL" # notice para que se vea en GitHub
+          echo "URL de descarga: $DOWNLOAD_URL"
