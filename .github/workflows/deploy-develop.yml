@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - "develop"         # Queremos despliegue cuando se haga push a develop
-      - "feature/**"      # Para ir probando antes usando una rama inermedia
+#      - "feature/**"      # Para ir probando antes usando una rama inermedia
 
 env:
   # Para modificar lo que haya en el código antes del build (tipicamente http://localhost:8080) y apuntar al servidor de desarrollo
