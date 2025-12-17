@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { SetLoginRequest, SetLoginResponse } from '../interfaces/users';
+import { RefreshTokenRequest, SetLoginRequest, SetLoginResponse } from '../interfaces/users';
 
 @Injectable({
   providedIn: 'root',
@@ -26,5 +26,15 @@ export class LoginUsuario {
     let urlSetUser: string = this.urlAPI + '/login';
     
     return this.httpClient.post<SetLoginResponse>(urlSetUser, request,{ headers });
+  }
+
+  refreshToken(request: RefreshTokenRequest): Observable<SetLoginResponse>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    // formamos el url de la llamada
+    let urlRefreshToken: string = this.urlAPI + '/refresh-token';
+
+    return this.httpClient.post<SetLoginResponse>(urlRefreshToken, request,{ headers });
   }
 }

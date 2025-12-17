@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { TokenService } from 'src/app/services/token-service';
 
 @Component({
   selector: 'app-menu',
@@ -8,11 +10,15 @@ import { Component } from '@angular/core';
 })
 
 // Página para el menu. Se muestran las 2 opciones disponibles: registro de objeto perdido y listado de objetos perdidos
-export class MenuPage {
-  // alias del usuario, pendiente de definir modo de almacenamiento de los datos del usuario
-  alias='Prueba';
+export class MenuPage implements OnInit{
+  // alias del usuario
+  alias: string | null ='';
 
-  constructor() {}
+  constructor(private tokenService: TokenService, private ruta: Router) {}
+  ngOnInit(){
+    // obtener el username del storage
+    this.alias = this.tokenService.getSessionUsername();
+  }
 
   // TODO - método que llevará a la página del registro de un nuevo objeto perdido
   goLostRegister() {

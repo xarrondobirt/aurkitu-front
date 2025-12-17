@@ -20,7 +20,7 @@ export interface VerifyEmailResponse{
 }
 
 export interface LogoutRequest{
-    accessToken: string
+    accessToken: string | null
 }
 
 export interface LogoutResponse{
@@ -32,7 +32,8 @@ export interface SetLoginRequest{
 }
 
 export interface SetLoginResponse{
-    mensaje: string
+    accessToken: string,
+    refreshToken: string
 }
 
 export interface ResetPassRequest{
@@ -52,4 +53,8 @@ export interface RecuperarPassRequest{
 
 export interface RecuperarPassResponse{
     mensaje: string
+}
+
+export interface RefreshTokenRequest{
+    token: string | null
 }

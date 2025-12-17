@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { LogoutRequest, LogoutResponse } from '../interfaces/users';
@@ -12,11 +12,14 @@ export class LogoutService {
   
   constructor(private httpClient: HttpClient) { }
 
-   // método para gestionar el logout de los usuarios
+   // método para gestionar el logout de los usuarios, requiere bearer
    logout(request: LogoutRequest){
+    const headers = new HttpHeaders({
+      Authorization: 'Bearer ' + request.accessToken
+    });
     // formamos el url de la llamada
     let urlLogout: string = this.urlAPI + '/logout';
     
-    return this.httpClient.post<LogoutResponse>(urlLogout, request);
+    return this.httpClient.post<LogoutResponse>(urlLogout, request,{headers});
   }
 }

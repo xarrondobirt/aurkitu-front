@@ -11,20 +11,25 @@
       <ion-card-content>
         <ion-grid>
           <ion-row *ngIf="this.listaConversaciones.length > 0">
-            <ion-col size="4">Estado</ion-col>
-            <ion-col size="4">Usuario</ion-col>
-            <ion-col size="4">Último mensaje</ion-col>
+            <ion-col size="3" class="titulo">Estado</ion-col>
+            <ion-col size="3" class="titulo">Tipo de objeto</ion-col>
+            <ion-col size="3" class="titulo">Usuario</ion-col>
+            <ion-col size="3" class="titulo">Último mensaje</ion-col>
           </ion-row>
           <ion-row *ngFor="let conver of this.listaConversaciones" (click)="this.verConversacion(conver)">
-            <ion-col size="4"> 
+            <ion-col size="3"> 
               <!-- dependiendo de si hay mensajes pendientes, se muestra un icono u otro-->
               <ion-img src="../assets/icon/sobre.png" class="imagen" *ngIf="conver.mensajesSinLeer == false" class="carta" alt="imagen sin mensajes pendientes"></ion-img>
               <ion-img src="../assets/icon/sobre_notificacion.png" class="imagen" *ngIf="conver.mensajesSinLeer == true" class="carta" alt="imagen con mensajes pendientes"></ion-img>
             </ion-col>
-            <ion-col size="4">
+            <!-- TODO obtener el tipo de objeto-->
+            <ion-col size="3">
+              <ion-label>TIPO DE OBJETO</ion-label>
+            </ion-col>
+            <ion-col size="3">
               <ion-label>{{conver.participante.username}}</ion-label>
             </ion-col>
-            <ion-col size="4"> 
+            <ion-col size="3"> 
               <ion-label>{{conver.lastUpdateDate | date:'dd/MM/yyyy HH:mm' }}</ion-label>
             </ion-col>
           </ion-row>

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConversacionResponse, MensajeDTO, MensajesRequest, MensajesResponse, SesionDTO, SetMensajeRequest } from 'src/app/interfaces/messages';
 import { MensajesService } from 'src/app/services/mensajes-service';
+import { TokenService } from 'src/app/services/token-service';
 
 @Component({
   selector: 'app-messages',
@@ -14,9 +15,11 @@ import { MensajesService } from 'src/app/services/mensajes-service';
 // pagina que incluye los mensajes de una conversación determinada y un chat
 export class MessagesPage implements OnInit {
   // para mostrar el nombre del usuario con el que se chatea
-  alias: string ='';
-  // TODO - QUITAR CUANDO SE IMPLEMENTE ACCESSTOKEN
-  accessTokenTest: string = '';
+  alias: string | null ='';
+  // usuario en local
+  userLocal: string | null ='';
+  // accessToken en local
+  accessTokenLocal: string | null = '';
   // listado de mensajes
   listaMensajes: MensajeDTO[] = [];
   // contenido del mensaje a grabar
@@ -25,38 +28,56 @@ export class MessagesPage implements OnInit {
   conversacion: any;
 
 
-  constructor(private ruta: Router, private mensajesService: MensajesService, private alertController: AlertController) { }
+  constructor(private ruta: Router, private mensajesService: MensajesService, private alertController: AlertController, private tokenService: TokenService) { }
 
   ngOnInit() {
-    // obtener la conversación al pasar en desde la página anterior
-    const navigation = this.ruta.getCurrentNavigation();
-    this.conversacion= navigation?.extras.state?.['conversacion'];
     
-    console.log('Conversacion ', this.conversacion);
-
+    this.obtenerConversacion();
+    
+    this.obtenerTokens();
+    
     if(this.conversacion != undefined){
-      // obtenemos el alias
-      this.alias = this.conversacion.participante.username;
       // obtenemos los mensajes de la conversacion
       this.getMensajesConversacion(this.conversacion.id);
     }
 
-    // TODO - obtener idUsuario mediante access token?
+  }
+  // obtener la conversación al pasar en desde la página anterior
+  obtenerConversacion() {
+    const navigation = this.ruta.getCurrentNavigation();
+
+    this.conversacion= navigation?.extras.state?.['conversacion'];
+    
+    console.log('Conversacion ', this.conversacion);
+    
+  }
+  obtenerTokens() {
+    this.accessTokenLocal = this.tokenService.getAccessToken();
+    this.userLocal = this.tokenService.getSessionUsername();
   }
 
   // método para obtener los mensajes de la conversacion
   getMensajesConversacion(id: number) {
 
     const request: MensajesRequest = {
-      accessToken: this.accessTokenTest
+      accessToken: this.accessTokenLocal
     };
 
-    // llamada al servicio -- TODO VALIDAR SERVICIO
+    // llamada al servicio
     this.mensajesService.getMensajesConversacionById(id,request).subscribe({
       next: (mensajes) => {
         this.listaMensajes = mensajes;
+
         console.log('Mensajes recibidos:', mensajes);
+        // obtener ambos usuarios de la conversacion
+        const usuario = this.listaMensajes.map(u => u.remitente.username).filter(u => u != this.userLocal);
+        console.log(usuario);
+        // obtener el usuario para indicarlo en el título
+        if(usuario != undefined && usuario[0] != null){
+          this.alias = usuario[0];
+        }
       },
+      // controlar los erroes
       error: (err) => {
         console.error('Error al obtener mensajes', err);
       }
@@ -72,16 +93,19 @@ export class MessagesPage implements OnInit {
         contenido: mensajeEnviar
       };
       
-      // TODO - MODIFICAR ACCESSTOKENTEST
+      
       let requestToken: MensajesRequest = {
-        accessToken: this.accessTokenTest
+        accessToken: this.accessTokenLocal
       };
-      // llamada al servicio -- TODO VALIDAR SERVICIO
+      // llamada al servicio para enviar el mensaje
       const promesa = new Promise<MensajesResponse>((resolve, reject) => {
         this.mensajesService.sendMessage(requestToken, request).subscribe({
           next: (response: MensajesResponse) => {
             console.log('Respuesta sendMensaje:', response);
             resolve(response);
+            // obtenemos los mensajes de nuevo para refrescar
+            this.getMensajesConversacion(this.conversacion.id);
+            this.mensajeNuevo ='';
           },
           error: (error) => {
             console.error('Error sendMensaje:', error);

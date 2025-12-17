@@ -1,6 +1,6 @@
 // Interfaces para la gestión de mensajes y conversaciones
 export interface MensajesRequest{
-    accessToken: string
+    accessToken: string | null
 }
 
 export interface MensajesResponse{
