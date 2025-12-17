@@ -61,6 +61,8 @@ jobs:
         run: |
           # Primero instalamos la dependencia de android si no está
           npm install @capacitor/android
+          # Generar iconos y splashscreens
+          npx capacitor-assets generate --android
           # Añadimos la plataforma (crea la carpeta android/)
           npx cap add android
           # Sincronizamos la web compilada
