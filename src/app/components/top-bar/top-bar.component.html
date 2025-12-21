@@ -9,8 +9,8 @@
   </ion-buttons>
   <ion-buttons slot="end">
     <ion-button>
-      <ion-img src="../assets/icon/sobre.png" class="imagen" *ngIf="this.mensajesPendientes == 0" (click)="this.goConversaciones()" alt="imagen sin mensajes pendientes"></ion-img>
-      <ion-img src="../assets/icon/sobre_notificacion.png" class="imagen"  *ngIf="this.mensajesPendientes > 0" (click)="this.goConversaciones()" alt="imagen con mensajes pendientes"></ion-img>
+      <ion-img src="../assets/icon/sobre.png" class="imagen" *ngIf="this.mensajesPendientes == true" (click)="this.goConversaciones()" alt="imagen sin mensajes pendientes"></ion-img>
+      <ion-img src="../assets/icon/sobre_notificacion.png" class="imagen"  *ngIf="this.mensajesPendientes == false" (click)="this.goConversaciones()" alt="imagen con mensajes pendientes"></ion-img>
     </ion-button>
   </ion-buttons>
 </ion-toolbar>
