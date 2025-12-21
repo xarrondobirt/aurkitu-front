@@ -1,9 +1,9 @@
 import { AlertController } from '@ionic/angular';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ConversacionResponse, MensajeDTO, MensajesRequest, MensajesResponse, SesionDTO, SetMensajeRequest } from 'src/app/interfaces/messages';
+import { MensajeDTO, MensajesRequest, MensajesResponse, SetMensajeRequest } from 'src/app/interfaces/messages';
 import { MensajesService } from 'src/app/services/mensajes-service';
-import { TokenService } from 'src/app/services/token-service';
+import { AuthenticationService } from 'src/app/services/authentication-service';
 
 @Component({
   selector: 'app-messages',
@@ -16,25 +16,25 @@ import { TokenService } from 'src/app/services/token-service';
 export class MessagesPage implements OnInit {
   // para mostrar el nombre del usuario con el que se chatea
   alias: string | null ='';
-  // usuario en local
-  userLocal: string | null ='';
-  // accessToken en local
-  accessTokenLocal: string | null = '';
+  // tokens en storage
+  tokensLocal: any;
   // listado de mensajes
   listaMensajes: MensajeDTO[] = [];
   // contenido del mensaje a grabar
   mensajeNuevo: string ='';
   // objeto conversacion que se pasa desde la pagina anterior
   conversacion: any;
+  // controlar errores
+   refrescado: boolean = false;
 
 
-  constructor(private ruta: Router, private mensajesService: MensajesService, private alertController: AlertController, private tokenService: TokenService) { }
+  constructor(private ruta: Router, private mensajesService: MensajesService, private alertController: AlertController, private authenticationService: AuthenticationService) { }
 
   ngOnInit() {
     
     this.obtenerConversacion();
     
-    this.obtenerTokens();
+    this.tokensLocal = this.authenticationService.getTokensLocal();
     
     if(this.conversacion != undefined){
       // obtenemos los mensajes de la conversacion
@@ -51,16 +51,12 @@ export class MessagesPage implements OnInit {
     console.log('Conversacion ', this.conversacion);
     
   }
-  obtenerTokens() {
-    this.accessTokenLocal = this.tokenService.getAccessToken();
-    this.userLocal = this.tokenService.getSessionUsername();
-  }
 
   // método para obtener los mensajes de la conversacion
   getMensajesConversacion(id: number) {
 
     const request: MensajesRequest = {
-      accessToken: this.accessTokenLocal
+      accessToken: this.tokensLocal.accessToken
     };
 
     // llamada al servicio
@@ -70,16 +66,24 @@ export class MessagesPage implements OnInit {
 
         console.log('Mensajes recibidos:', mensajes);
         // obtener ambos usuarios de la conversacion
-        const usuario = this.listaMensajes.map(u => u.remitente.username).filter(u => u != this.userLocal);
+        const usuario = this.listaMensajes.map(u => u.remitente.username).filter(u => u != this.tokensLocal.alias);
         console.log(usuario);
         // obtener el usuario para indicarlo en el título
         if(usuario != undefined && usuario[0] != null){
           this.alias = usuario[0];
         }
       },
-      // controlar los erroes
+      // controlar los errores
       error: (err) => {
         console.error('Error al obtener mensajes', err);
+
+        if(err.error.status == 401 && this.refrescado == false){
+          this.refrescado = true;
+          // refrescar el token
+          this.authenticationService.refrescarToken(this.tokensLocal);
+          // volvemos a obtener las conversaciones con el token refrescado
+          this.getMensajesConversacion(id);
+        }
       }
     });
   }
@@ -95,7 +99,7 @@ export class MessagesPage implements OnInit {
       
       
       let requestToken: MensajesRequest = {
-        accessToken: this.accessTokenLocal
+        accessToken: this.tokensLocal.accessTokenLocal
       };
       // llamada al servicio para enviar el mensaje
       const promesa = new Promise<MensajesResponse>((resolve, reject) => {

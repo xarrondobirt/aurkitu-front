@@ -1,11 +1,11 @@
-import { SetLoginRequest, SetLoginResponse } from 'src/app/interfaces/users';
+import { SetLoginRequest, SetLoginResponse, Tokens } from 'src/app/interfaces/users';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AlertController } from '@ionic/angular';
 import { LoginUsuario } from '../../services/login-usuario';
-import { TokenService } from 'src/app/services/token-service';
 import { Router } from '@angular/router';
+import { AuthenticationService } from 'src/app/services/authentication-service';
 
 @Component({
   selector: 'app-login',
@@ -32,7 +32,7 @@ export class LoginPage implements OnInit {
   };
 
   // Constructor. Inyección de servicios y controladores
-  constructor(private loginService: LoginUsuario, private formBuilder: FormBuilder, private alertController: AlertController, private tokenService: TokenService, private router: Router) { }
+  constructor(private loginService: LoginUsuario, private formBuilder: FormBuilder, private alertController: AlertController, private router: Router, private authenticationService:AuthenticationService) { }
 
   // Método al iniciar que incluye las validaciones de los inputs del usuario en el formulario
   ngOnInit() {
@@ -69,7 +69,12 @@ export class LoginPage implements OnInit {
     responseObservable.subscribe(datos =>{
       response = datos;
       console.log(response);
-      this.actualizarTokens(response);
+      let tokens: Tokens = {
+        accessToken: response.accessToken,
+        refreshToken: response.refreshToken,
+        alias: this.user
+      }
+      this.authenticationService.actualizarTokens(tokens);
       // Alerta login correcto. Se cambiará cuando tengamos la siguiente pantalla
       this.alertaCorrecto();
     },
@@ -111,12 +116,5 @@ export class LoginPage implements OnInit {
     });
 
     await alert.present();
-  }
-  
-  // método para actualizar los tokens
-  actualizarTokens(response: SetLoginResponse) {
-    this.tokenService.setAccessToken(response.accessToken);
-    this.tokenService.setRefreshToken(response.refreshToken);
-    this.tokenService.setSessionUsername(this.user);
   }
 }

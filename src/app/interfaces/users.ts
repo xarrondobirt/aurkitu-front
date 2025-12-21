@@ -58,3 +58,9 @@ export interface RecuperarPassResponse{
 export interface RefreshTokenRequest{
     token: string | null
 }
+
+export interface Tokens{
+    accessToken: string | null,
+    refreshToken: string | null,
+    alias: string | null
+}
