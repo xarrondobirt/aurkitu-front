@@ -1,0 +1,94 @@
+<ion-content [fullscreen]="true">
+  <div class="contenido">
+
+    <h2>Nuevo objeto perdido</h2>
+
+    <form class="formulario" [formGroup]="formularioObjeto">
+
+      <div id="map"></div>
+      <!--
+      <ion-input
+        fill="solid"
+        placeholder="Ubicación"
+        formControlName="ubicacion">
+      </ion-input>
+      -->
+
+      <ion-input
+        fill="solid"
+        type="number"
+        placeholder="Radio (metros)"
+        formControlName="radio">
+      </ion-input>
+
+      <!--
+      <ion-input
+        fill="solid"
+        type="number"
+        placeholder="Tipo de objeto"
+        formControlName="idTipoObjeto">
+      </ion-input>
+      -->
+      <ion-item>
+        <ion-label>Tipo de objeto</ion-label>
+        <ion-select placeholder="Selecciona un tipo" formControlName="idTipoObjeto">
+          <ion-select-option *ngFor="let tipo of tiposObjeto" [value]="tipo.id">
+            {{ tipo.descripcion }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+
+      <ion-textarea
+        fill="solid"
+        placeholder="Descripción"
+        formControlName="descripcion">
+      </ion-textarea>
+
+      <ion-input
+        fill="solid"
+        placeholder="Marca"
+        formControlName="marca">
+      </ion-input>
+
+      <ion-input
+        fill="solid"
+        placeholder="Número de serie"
+        formControlName="numSerie">
+      </ion-input>
+
+      <!--
+      <ion-input
+        fill="solid"
+        type="number"
+        placeholder="Color"
+        formControlName="idColor">
+      </ion-input>
+      -->
+      <ion-item>
+        <ion-label>Color</ion-label>
+        <ion-select placeholder="Selecciona un color" formControlName="idColor">
+          <ion-select-option *ngFor="let color of coloresObjeto" [value]="color.id">
+            {{ color.descripcion }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+
+      <ion-datetime
+        presentation="date-time"
+        formControlName="fechaPerdida">
+      </ion-datetime>
+
+      <ion-button
+        expand="block" 
+        [disabled]="formularioObjeto.invalid" 
+        (click)="onSubmit()">
+        Guardar objeto
+      </ion-button>
+
+    </form>
+
+  </div>
+</ion-content>
+

@@ -1,0 +1,86 @@
+@import "node_modules/leaflet/dist/leaflet.css";
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* Contenedor general */
+.contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  width: 100%; /* importante */
+}
+
+/* Título */
+h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+/* Formulario */
+.formulario {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Inputs, textareas, datetime */
+ion-input,
+ion-textarea,
+ion-datetime {
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 15px;
+}
+
+/* Botón de submit */
+ion-button {
+  width: 70%;
+  max-width: 300px;
+  margin-top: 20px;
+}
+
+/* Estilo del mapa */
+#map {
+  width: 100%;
+  height: 300px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+/* Opcional: placeholders y textos de inputs */
+ion-input::part(input),
+ion-textarea::part(native) {
+  font-size: 16px;
+  color: #333;
+}
+
+/* Para que el formulario no se vea muy pegado al top en pantallas grandes */
+@media (min-height: 700px) {
+  .contenido {
+    justify-content: center;
+  }
+}
+
+#map {
+  width: 100%;
+  height: 300px; /* o más grande si quieres */
+  min-height: 300px;
+  max-width: 600px; /* opcional, igual que tus inputs */
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  display: block; /* importante */
+}
+
+

@@ -18,7 +18,11 @@ const routes: Routes = [
     loadChildren: () => import('./pages/reset-password/reset-password.module').then( m => m.ResetPasswordPageModule)
   },
   { path: 'conversations', loadChildren: () => import('./pages/conversations/conversations.module').then(m => m.ConversationsPageModule)},
-  { path: 'messages', loadChildren: () => import('./pages/messages/messages.module').then(m => m.MessagesPageModule)},
+  { path: 'messages', loadChildren: () => import('./pages/messages/messages.module').then(m => m.MessagesPageModule)},  {
+    path: 'new-object',
+    loadChildren: () => import('./pages/new-object/new-object.module').then( m => m.NewObjectPageModule)
+  },
+
 ];
 
 @NgModule({
