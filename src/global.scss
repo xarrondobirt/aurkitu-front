@@ -25,6 +25,9 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
+/* Estilos de leaflet para el mapa (escoge la versión según el package.json*/
+@import "leaflet/dist/leaflet.css";
+
 /**
  * Ionic Dark Mode
  * -----------------------------------------------------
@@ -36,13 +39,19 @@
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
 
+:root {
+  /* Definimos el color aquí para que sea accesible también por JS (leaflet) */
+  --aurkitu-naranja: #EC7445;
+  --aurkitu-fondo: #F2DEC6;
+}
+
 /* 27/10/2025 - (LF) Colores globales del fondo y botones*/
 ion-content {
-    --background: #F2DEC6;
+  --background: var(--aurkitu-fondo);
 }
 
 ion-button {
-    --background: #EC7445;
+  --background: var(--aurkitu-naranja);
     --color: #ffffff;
     //border-radius: 10px;
     --font-weight: bold;
