@@ -1,5 +1,5 @@
 import { AlertController } from '@ionic/angular';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MensajeDTO, MensajesRequest, MensajesResponse, SetMensajeRequest } from 'src/app/interfaces/messages';
 import { MensajesService } from 'src/app/services/mensajes-service';
@@ -26,6 +26,8 @@ export class MessagesPage implements OnInit {
   conversacion: any;
   // controlar errores
    refrescado: boolean = false;
+  // para que se muestren los últimos mensajes
+  @ViewChild('scrollFinal') contenedor!: ElementRef<HTMLDivElement>;
 
 
   constructor(private ruta: Router, private mensajesService: MensajesService, private alertController: AlertController, private authenticationService: AuthenticationService) { }
@@ -72,6 +74,8 @@ export class MessagesPage implements OnInit {
         if(usuario != undefined && usuario[0] != null){
           this.alias = usuario[0];
         }
+         // mostrar los últimos mensajes
+        this.scrollFin();
       },
       // controlar los errores
       error: (err) => {
@@ -134,5 +138,13 @@ export class MessagesPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  // método que lleva al final del contenedor para que se visualicen los últimos mensajes
+  scrollFin() {
+    requestAnimationFrame(() => {
+      const el = this.contenedor.nativeElement;
+      el.scrollTop = el.scrollHeight;
+    });
   }
 }
