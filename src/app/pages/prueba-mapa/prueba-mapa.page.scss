@@ -1,0 +1,81 @@
+// 1. CABECERA CORPORATIVA
+ion-toolbar {
+  --background: var(--aurkitu-naranja);
+  --color: #ffffff;
+
+  ion-title {
+    font-weight: 800; // Letra gruesa
+    letter-spacing: 0.5px;
+  }
+}
+x
+// 2. CONTENIDO
+ion-content {
+  // texto con buen contraste.
+  --color: #333;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  margin-top: 0;
+}
+
+p {
+  font-size: 14px;
+  color: #666; // Gris suave - instrucciones
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+// 3. CONTENEDOR DEL MAPA
+.map-test-container {
+  width: 100%;
+  height: 400px; // Altura generosa para probar bien
+
+  background-color: #fff; // Marco blanco limpio alrededor del mapa
+  border: 4px solid #ffffff; // Marco fotográfico
+
+  border-radius: 24px; // Bordes muy redondeados
+  overflow: hidden;    // Para que el mapa no se salga de las curvas
+
+  // Sombra suave para que flote sobre el fondo crema
+  box-shadow: 0 10px 25px rgba(189, 158, 130, 0.3);
+
+  margin-bottom: 15px;
+  position: relative;
+}
+
+// 4. CAJA DE DEBUG (Datos técnicos)
+.debug-box {
+  background: rgba(255, 255, 255, 0.5); // Blanco semitransparente
+  padding: 15px;
+  border-radius: 12px;
+
+  font-family: 'Courier New', Courier, monospace; // Fuente tipo código
+  font-size: 13px;
+  color: #444;
+
+  // Borde lateral naranja para indicar que es info técnica
+  border-left: 5px solid var(--aurkitu-naranja);
+
+  margin-bottom: 10px;
+}
+
+// 5. SEPARADOR VISUAL
+.separator {
+  height: 2px;
+  background-color: rgba(236, 116, 69, 0.2); // Naranja muy suave
+  margin: 40px 0;
+  border-radius: 2px;
+}
+
+// Ajustes específicos para los textos de estado
+ion-text[color="success"] h2 {
+  color: var(--aurkitu-naranja);
+}
+
+ion-text[color="primary"] h2 {
+  color: var(--aurkitu-naranja);
+}

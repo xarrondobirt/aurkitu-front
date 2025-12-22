@@ -1,0 +1,29 @@
+<div class="map-wrapper">
+  <div id="map"></div>
+
+  <div class="fab-location" (click)="locateUser()">
+    <ion-icon name="locate"></ion-icon>
+  </div>
+
+  <div class="controls-card" *ngIf="currentRadius > 0">
+
+    <div class="info-row">
+      <div class="badge">
+        {{ useCase === 'SEARCH' ? 'BÚSQUEDA' : 'ALTA' }}
+      </div>
+      <div class="radius-text">
+        Radio: <strong>{{ currentRadius }}m</strong>
+      </div>
+    </div>
+
+    <ion-range
+      [min]="50"
+      [max]="10000"
+      [step]="50"
+      [value]="currentRadius"
+      (ionChange)="onRadiusChange($event)">
+      <ion-icon size="small" slot="start" name="resize-outline"></ion-icon>
+    </ion-range>
+
+  </div>
+</div>

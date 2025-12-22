@@ -4,8 +4,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  //{ path: '', component: UserRegisterPage },
-  { path: '', component: LoginPage },
+  { path: '', component: UserRegisterPage },
+  /*{ path: '', redirectTo: 'prueba-mapa', pathMatch: 'full'  }, #Para probar el mapa en inicio (en Android no hay URL)
+  { path: 'prueba-mapa', loadComponent: () => import('./pages/prueba-mapa/prueba-mapa.page').then( m => m.PruebaMapaPage)},*/
   { path: 'userRegister', loadChildren: () => import('./pages/userRegister/userRegister.module').then(m => m.UserRegisterPageModule) },
   { path: 'login',loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)},
   { path: 'menu', loadChildren: () => import('./pages/menu/menu.module').then(m => m.MenuPageModule)},
