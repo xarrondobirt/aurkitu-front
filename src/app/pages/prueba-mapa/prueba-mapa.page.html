@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title>Test Aurkitu Map</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-text color="primary">
+    <h2>Mapa</h2>
+    <p>Debe mostrar slider y círculo naranja, 500m por defecto.</p>
+    <p>Al arrastrar la ubicación el círculo desaparece.</p>
+  </ion-text>
+
+  <div class="map-test-container">
+    <aurkitu-map
+      useCase="SEARCH"
+      [initialRadius]="500"
+      (locationChange)="handleSearchChange($event)">
+    </aurkitu-map>
+  </div>
+
+  @if (resultadoBusqueda) {
+    <div class="debug-box">
+      Lat: {{ resultadoBusqueda.lat | number:'1.4-4' }} <br>
+      Lng: {{ resultadoBusqueda.lng | number:'1.4-4' }} <br>
+      Radio: {{ resultadoBusqueda.radius }}m
+    </div>
+  }
+
+
+  <div class="separator"></div>
+
+</ion-content>
