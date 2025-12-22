@@ -1,5 +1,5 @@
 import { AlertController } from '@ionic/angular';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConversacionResponse, MensajeDTO, MensajesRequest, MensajesResponse, SesionDTO, SetMensajeRequest } from 'src/app/interfaces/messages';
 import { MensajesService } from 'src/app/services/mensajes-service';
@@ -23,6 +23,8 @@ export class MessagesPage implements OnInit {
   mensajeNuevo: string ='';
   // objeto conversacion que se pasa desde la pagina anterior
   conversacion: any;
+  // para que se muestren los últimos mensajes
+  @ViewChild('scrollFinal') contenedor!: ElementRef<HTMLDivElement>;
 
 
   constructor(private ruta: Router, private mensajesService: MensajesService, private alertController: AlertController) { }
@@ -30,7 +32,7 @@ export class MessagesPage implements OnInit {
   ngOnInit() {
     // obtener la conversación al pasar en desde la página anterior
     const navigation = this.ruta.getCurrentNavigation();
-    this.conversacion= navigation?.extras.state?.['conversacion'];
+    this.conversacion = navigation?.extras.state?.['conversacion'];
     
     console.log('Conversacion ', this.conversacion);
 
@@ -56,6 +58,8 @@ export class MessagesPage implements OnInit {
       next: (mensajes) => {
         this.listaMensajes = mensajes;
         console.log('Mensajes recibidos:', mensajes);
+         // mostrar los últimos mensajes
+        this.scrollFin();
       },
       error: (err) => {
         console.error('Error al obtener mensajes', err);
@@ -106,5 +110,13 @@ export class MessagesPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  // método que lleva al final del contenedor para que se visualicen los últimos mensajes
+  scrollFin() {
+    requestAnimationFrame(() => {
+      const el = this.contenedor.nativeElement;
+      el.scrollTop = el.scrollHeight;
+    });
   }
 }

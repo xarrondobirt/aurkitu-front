@@ -10,7 +10,7 @@
   <!-- caja que incluye los mensajes y el footer-->
   <div class="contenidoChat">
     <!-- mensajes intercambiados por el usuario logeado con otro usuario-->
-    <div class="mensajesChat">
+    <div class="mensajesChat" #scrollFinal>
       <div *ngFor="let mens of this.listaMensajes">
         <!-- izquierda los mensajes del usuario no logeado-->
         <div class="usuarioEncontrado" *ngIf="mens.remitente.username == this.alias">
