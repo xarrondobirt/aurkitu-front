@@ -1,26 +1,19 @@
-@import "node_modules/leaflet/dist/leaflet.css";
-
-.leaflet-container {
-  width: 100%;
-  height: 100%;
+/* Fondo general */
+ion-content {
+  --background: #F2DEC6; /* mismo fondo que login/menú */
 }
 
-/* Contenedor general */
 .contenido {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
   padding: 20px;
-  min-height: 100vh;
-  box-sizing: border-box;
-  width: 100%; /* importante */
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 /* Título */
 h2 {
-  margin-bottom: 20px;
   text-align: center;
+  font-weight: 600;
+  margin-bottom: 20px;
   color: #333;
 }
 
@@ -28,59 +21,71 @@ h2 {
 .formulario {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 600px;
+  gap: 14px;
 }
 
-/* Inputs, textareas, datetime */
+/* Inputs, textarea y datetime */
 ion-input,
 ion-textarea,
 ion-datetime {
-  width: 100%;
-  max-width: 500px;
-  margin-bottom: 15px;
+  --background: #ffffff;
+  --border-radius: 12px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
 }
 
-/* Botón de submit */
+/* Accordion dropdowns (header + contenido) */
+ion-accordion-group ion-accordion {
+  --background: #ffffff; /* fondo del header */
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+ion-accordion-group ion-accordion ion-item {
+  --background: #ffffff; /* fondo del header */
+  border-radius: 12px;
+}
+
+ion-accordion-group ion-accordion div[slot="content"] {
+  background: #ffffff; /* fondo del contenido desplegable */
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  padding: 4px 0;
+}
+
+/* Quitar líneas de ion-item */
+ion-item::part(native) {
+  border: none;
+}
+
+/* Mantener bordes redondeados al presionar */
+ion-item:active {
+  border-radius: 12px;
+}
+
+/* Mapa */
+#map {
+  width: 100%;
+  height: 260px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  margin-bottom: 10px;
+}
+
+/* Botón principal */
 ion-button {
-  width: 70%;
-  max-width: 300px;
-  margin-top: 20px;
+  --background: #f47c48; /* naranja corporativo */
+  --border-radius: 12px;
+  --box-shadow: 0 4px 10px rgba(244, 124, 72, 0.4);
+  font-weight: 600;
+  margin-top: 10px;
 }
 
-/* Estilo del mapa */
-#map {
-  width: 100%;
-  height: 300px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+/* Botón deshabilitado */
+ion-button[disabled] {
+  --background: #f2b59a;
+  opacity: 0.7;
 }
-
-/* Opcional: placeholders y textos de inputs */
-ion-input::part(input),
-ion-textarea::part(native) {
-  font-size: 16px;
-  color: #333;
-}
-
-/* Para que el formulario no se vea muy pegado al top en pantallas grandes */
-@media (min-height: 700px) {
-  .contenido {
-    justify-content: center;
-  }
-}
-
-#map {
-  width: 100%;
-  height: 300px; /* o más grande si quieres */
-  min-height: 300px;
-  max-width: 600px; /* opcional, igual que tus inputs */
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  display: block; /* importante */
-}
-
-

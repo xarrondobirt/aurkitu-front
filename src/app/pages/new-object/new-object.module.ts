@@ -4,6 +4,7 @@ import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { NewObjectPageRoutingModule } from './new-object-routing.module';
 import { NewObjectPage } from './new-object.page';
+import { OwnComponentsModule } from "src/app/components/own-components.module";
 
 @NgModule({
   imports: [
@@ -11,7 +12,8 @@ import { NewObjectPage } from './new-object.page';
     FormsModule,
     IonicModule,
     ReactiveFormsModule,
-    NewObjectPageRoutingModule
+    NewObjectPageRoutingModule,
+    OwnComponentsModule
   ],
   declarations: [NewObjectPage]
 })

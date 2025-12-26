@@ -1,19 +1,17 @@
 <ion-content [fullscreen]="true">
+  <!-- componente personalizado para la cabecera-->
+  <app-top-bar></app-top-bar>
+
   <div class="contenido">
 
     <h2>Nuevo objeto perdido</h2>
 
     <form class="formulario" [formGroup]="formularioObjeto">
 
+      <!-- Mapa -->
       <div id="map"></div>
-      <!--
-      <ion-input
-        fill="solid"
-        placeholder="Ubicación"
-        formControlName="ubicacion">
-      </ion-input>
-      -->
 
+      <!-- Radio -->
       <ion-input
         fill="solid"
         type="number"
@@ -21,68 +19,85 @@
         formControlName="radio">
       </ion-input>
 
-      <!--
-      <ion-input
-        fill="solid"
-        type="number"
-        placeholder="Tipo de objeto"
-        formControlName="idTipoObjeto">
-      </ion-input>
-      -->
-      <ion-item>
-        <ion-label>Tipo de objeto</ion-label>
-        <ion-select placeholder="Selecciona un tipo" formControlName="idTipoObjeto">
-          <ion-select-option *ngFor="let tipo of tiposObjeto" [value]="tipo.id">
-            {{ tipo.descripcion }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
+      <!-- Tipo de objeto (accordion) -->
+      <!-- Tipo de objeto (accordion) -->
+      <ion-accordion-group #tipoAccordion>
+        <ion-accordion value="tipoObjeto">
+          <ion-item slot="header">
+            <ion-label>{{ tipoSeleccionadoTexto }}</ion-label>
+          </ion-item>
 
+          <div slot="content">
+            <ion-list>
+              <ion-item
+                button
+                *ngFor="let tipo of tiposObjeto"
+                (click)="seleccionarTipo(tipo)">
+                {{ tipo.descripcion }}
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
 
+      <!-- Descripción -->
       <ion-textarea
         fill="solid"
         placeholder="Descripción"
         formControlName="descripcion">
       </ion-textarea>
 
+      <!-- Marca -->
       <ion-input
         fill="solid"
         placeholder="Marca"
         formControlName="marca">
       </ion-input>
 
+      <!-- Número de serie -->
       <ion-input
         fill="solid"
         placeholder="Número de serie"
         formControlName="numSerie">
       </ion-input>
 
-      <!--
-      <ion-input
-        fill="solid"
-        type="number"
-        placeholder="Color"
-        formControlName="idColor">
-      </ion-input>
-      -->
-      <ion-item>
-        <ion-label>Color</ion-label>
-        <ion-select placeholder="Selecciona un color" formControlName="idColor">
-          <ion-select-option *ngFor="let color of coloresObjeto" [value]="color.id">
-            {{ color.descripcion }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
+      <!-- Color (accordion) -->
+      <ion-accordion-group #colorAccordion>
+        <ion-accordion value="colorObjeto">
+          <ion-item slot="header">
+            <ion-label>{{ colorSeleccionadoTexto }}</ion-label>
+          </ion-item>
 
+          <div slot="content">
+            <ion-list>
+              <ion-item
+                button
+                *ngFor="let color of coloresObjeto"
+                (click)="seleccionarColor(color)">
+                {{ color.descripcion }}
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
 
+      <!-- Fecha -->
+       <!--
       <ion-datetime
         presentation="date-time"
         formControlName="fechaPerdida">
       </ion-datetime>
+-->
+      <ion-item>
+        <!--<ion-label position="floating">Fecha</ion-label>-->
+        <ion-input type="date" formControlName="fechaPerdida"></ion-input>
+      </ion-item>
 
+
+      <!-- Botón -->
       <ion-button
-        expand="block" 
-        [disabled]="formularioObjeto.invalid" 
+        expand="block"
+        [disabled]="formularioObjeto.invalid"
         (click)="onSubmit()">
         Guardar objeto
       </ion-button>
@@ -91,4 +106,3 @@
 
   </div>
 </ion-content>
-
