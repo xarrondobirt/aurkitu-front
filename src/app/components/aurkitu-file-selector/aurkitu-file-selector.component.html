@@ -1,0 +1,51 @@
+<div class="selector-card ion-activatable ripple-parent"
+     [class.has-content]="previewUrl || fileName"
+     (click)="handleSelection()">
+
+  <ion-ripple-effect></ion-ripple-effect>
+
+  @if (previewUrl) {
+    <div class="preview-content image-preview">
+      <img [src]="previewUrl" alt="Preview" />
+      <div class="overlay">
+        <ion-chip color="success">
+          <ion-icon [icon]="icos.check"></ion-icon>
+          <ion-label>Seleccionada</ion-label>
+        </ion-chip>
+      </div>
+    </div>
+
+  } @else if (fileName) {
+    <div class="preview-content doc-preview">
+      <ion-icon [icon]="icos.doc" color="primary"></ion-icon>
+      <span class="filename">{{ fileName }}</span>
+    </div>
+
+  } @else {
+    <div class="empty-state">
+      <ion-icon
+        [icon]="type === 'image' ? icos.image : icos.folder"
+        class="main-icon">
+      </ion-icon>
+
+      <p class="label">{{ label }}</p>
+
+      <div class="cta">
+        <ion-icon [icon]="icos.add"></ion-icon> Buscar
+      </div>
+    </div>
+  }
+
+  @if (previewUrl || fileName) {
+    <ion-button
+      class="remove-btn"
+      color="danger"
+      size="small"
+      shape="round"
+      (click)="removeFile($event)">
+      <ion-icon [icon]="icos.trash" slot="icon-only"></ion-icon>
+    </ion-button>
+  }
+
+  <input [id]="uniqueId" type="file" hidden accept="application/pdf,image/*" (change)="onNativeFileChange($event)" />
+</div>

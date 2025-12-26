@@ -1,0 +1,151 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.selector-card {
+  position: relative;
+  height: 200px;
+  width: 100%;
+
+  background-color: #ffffff;
+  border-radius: 24px;
+
+  border: 3px dashed #ebd5c3;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  box-shadow: 0 4px 12px rgba(189, 158, 130, 0.1);
+
+  /* ESTADO: CONTENIDO SELECCIONADO */
+  &.has-content {
+    border-style: solid;
+    border-color: #ffffff;
+    border-width: 4px;
+    box-shadow: 0 10px 25px rgba(189, 158, 130, 0.3);
+  }
+
+  /* Efecto al pulsar (Active) */
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* --- ESTADO VACÍO --- */
+.empty-state {
+  text-align: center;
+  padding: 20px;
+
+  .main-icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+    color: var(--aurkitu-naranja);
+    opacity: 0.8;
+  }
+
+  .label {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #555; /* Gris cálido */
+  }
+
+  .cta {
+    margin-top: 12px;
+    font-size: 14px;
+    color: var(--aurkitu-naranja);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* --- PREVIEWS --- */
+.preview-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+
+
+  &.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+  }
+
+  /* Documento centrado */
+  &.doc-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fff8f2;
+
+    ion-icon {
+      font-size: 64px;
+      color: var(--aurkitu-naranja);
+      margin-bottom: 10px;
+    }
+
+    .filename {
+      padding: 8px 16px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #444;
+      background: rgba(255,255,255,0.8);
+      border-radius: 12px;
+      max-width: 90%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+/* --- OVERLAY DE ÉXITO (Solo foto) --- */
+.overlay {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  text-align: center;
+
+  ion-chip {
+    background: var(--aurkitu-naranja);
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+}
+
+/* --- BOTÓN DE BORRAR --- */
+.remove-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  margin: 0;
+
+
+  --background: #ffffff;
+  --color: #ff4d4d;
+  --background-activated: #ffeaea;
+
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+
+  ion-icon {
+    font-size: 20px;
+  }
+}

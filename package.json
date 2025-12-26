@@ -23,6 +23,7 @@
     "@angular/router": "^20.0.0",
     "@capacitor/android": "^7.4.4",
     "@capacitor/app": "7.1.0",
+    "@capacitor/camera": "^7.0.3",
     "@capacitor/core": "7.4.4",
     "@capacitor/geolocation": "^7.1.7",
     "@capacitor/haptics": "7.0.2",
