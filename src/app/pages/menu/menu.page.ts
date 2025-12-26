@@ -23,7 +23,7 @@ export class MenuPage implements OnInit{
   // TODO - método que llevará a la página del registro de un nuevo objeto perdido
   goLostRegister() {
     // TODO - Ir a registro de objetos perdidos
-    // this.router.navigate(['/login']);
+    this.ruta.navigate(['/new-object']);
   }
 
   // TODO - método que llevará a la página del catálogo de objetos perdidos registrados
