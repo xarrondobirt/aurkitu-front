@@ -1,0 +1,98 @@
+
+ion-toolbar {
+  --background: var(--aurkitu-naranja);
+  --color: #ffffff;
+
+  ion-title {
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+}
+
+ion-content {
+  // Ajuste de padding
+  --padding-top: 20px;
+}
+
+h3 {
+  color: var(--aurkitu-naranja);
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  margin-top: 24px;
+}
+
+p.instructions {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+// 3. CAJA DE ESTILO TARJETA
+.card-style {
+  background-color: #fff;
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(189, 158, 130, 0.15);
+  margin-bottom: 20px;
+  border: 2px solid rgba(255,255,255,0.5);
+
+  ion-item {
+    --background: transparent;
+    --padding-start: 0;
+    --inner-padding-end: 0;
+
+    ion-label {
+      color: var(--aurkitu-naranja);
+      font-weight: 700 !important;
+    }
+
+    ion-textarea {
+      background: #f9f9f9;
+      border-radius: 12px;
+      margin-top: 10px;
+      padding: 8px;
+      border: 1px solid #eee;
+      --padding-start: 10px;
+    }
+  }
+}
+
+// 4. RESULTADOS DE DEPURACIÓN
+.debug-box {
+  background: rgba(255, 255, 255, 0.6);
+  padding: 15px;
+  border-radius: 16px;
+  margin-top: 20px;
+  border: 1px solid rgba(255,255,255, 0.8);
+  color: #555;
+  font-family: monospace;
+  font-size: 13px;
+
+  ul {
+    padding-left: 20px;
+    margin: 5px 0;
+  }
+}
+
+// 5. BOTÓN (forzar márgenes)
+ion-button {
+  margin-top: 30px;
+  margin-bottom: 40px;
+  --box-shadow: 0 8px 15px rgba(236, 116, 69, 0.3);
+}
+
+.file-info {
+  background: #f4f5f8;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+
+  strong { color: var(--ion-color-dark); }
+  small { color: var(--ion-color-medium); margin-left: auto; }
+}
