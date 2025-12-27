@@ -2,7 +2,6 @@ import { SetUserRequest, SetUserResponse, VerifyEmailRequest, VerifyEmailRespons
 import { RegistroUsuarioService } from '../../services/registro-usuario-service';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
@@ -223,10 +222,5 @@ export class UserRegisterPage {
     });
 
     await alert.present();
-  }
-
-  // método para llevar a la página del login
-  goLogin() {
-    this.router.navigate(['/login']);
   }
 }
