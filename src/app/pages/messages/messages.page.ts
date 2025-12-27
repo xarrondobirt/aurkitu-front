@@ -99,7 +99,7 @@ export class MessagesPage implements OnInit {
       
       
       let requestToken: MensajesRequest = {
-        accessToken: this.tokensLocal.accessTokenLocal
+        accessToken: this.tokensLocal.accessToken
       };
       // llamada al servicio para enviar el mensaje
       const promesa = new Promise<MensajesResponse>((resolve, reject) => {
@@ -113,7 +113,12 @@ export class MessagesPage implements OnInit {
           },
           error: (error) => {
             console.error('Error sendMensaje:', error);
-            reject(error);
+            
+            if(error.error.status == 401 && this.refrescado == false){
+              this.refrescado = true;
+              // refrescar el token
+              this.authenticationService.refrescarToken(this.tokensLocal);
+            }
           },
         });
       });
