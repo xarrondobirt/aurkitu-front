@@ -99,3 +99,16 @@
 
   ion-icon { color: var(--ion-color-medium); }
 }
+
+.map-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#map {
+  width: 100%;
+  height: 400px; /* <-- mínimo para que se vea */
+  z-index: 1;
+}
+

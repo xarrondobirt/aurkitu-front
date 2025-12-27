@@ -6,7 +6,7 @@ import { NewObjectPageRoutingModule } from './new-object-routing.module';
 import { NewObjectPage } from './new-object.page';
 import { OwnComponentsModule } from "src/app/components/own-components.module";
 import { AurkituMapComponent } from '../../components/aurkitu-map/aurkitu-map.component';
-
+import { AurkituFileSelectorComponent } from '../../components/aurkitu-file-selector/aurkitu-file-selector.component';
 
 @NgModule({
   imports: [
@@ -16,7 +16,8 @@ import { AurkituMapComponent } from '../../components/aurkitu-map/aurkitu-map.co
     ReactiveFormsModule,
     NewObjectPageRoutingModule,
     OwnComponentsModule,
-    AurkituMapComponent
+    AurkituMapComponent,
+    AurkituFileSelectorComponent
   ],
   declarations: [NewObjectPage]
 })
