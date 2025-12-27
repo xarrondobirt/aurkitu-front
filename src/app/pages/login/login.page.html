@@ -6,8 +6,16 @@
     <h2>Login</h2>
     <!-- Formulario login -->
     <form class="formulario" [formGroup]="formularioLogin">
-        <ion-input fill="solid" type="text" required placeholder="Usuario" [(ngModel)]="user" name="user" formControlName="user"></ion-input>
-        <ion-input fill="solid" type="password" required required placeholder="Contraseña" [(ngModel)]="password" name="password" formControlName="password" (keyup.enter)="onSubmit()"></ion-input>
+      <ion-input fill="solid" type="text" required placeholder="Usuario" [(ngModel)]="user" name="user"
+        formControlName="user"></ion-input>
+      <ion-label *ngIf="formularioLogin.get('user')?.invalid && formularioLogin.get('user')?.touched" color="danger"
+        class="error-tooltip-label">El alias debe tener al menos 3 caracteres</ion-label>
+      <ion-input fill="solid" type="password" required required placeholder="Contraseña" [(ngModel)]="password"
+        name="password" formControlName="password" (keyup.enter)="onSubmit()"></ion-input>
+      <ion-label *ngIf="formularioLogin.get('password')?.invalid && formularioLogin.get('password')?.touched"
+        color="danger" class="error-tooltip-label multiline-tooltip">
+        Usa al menos 6 caracteres, con mayúsculas, minúsculas, números y caracteres especiales.
+      </ion-label>
     </form>
     <!-- Botón inicio-->
     <ion-button expand="block" [disabled]="formularioLogin.invalid" (click)="onSubmit()">

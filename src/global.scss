@@ -53,6 +53,45 @@ ion-content {
 ion-button {
   --background: var(--aurkitu-naranja);
     --color: #ffffff;
-    //border-radius: 10px;
     --font-weight: bold;
 }
+
+
+.error-tooltip-label {
+  
+  display: block !important;
+  text-align: left !important;
+  margin: 10px 0 10px 0 !important;
+
+  /* ESTILO VISUAL DE BOCADILLO */
+  background: var(--ion-color-danger) !important;
+  color: white !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  font-size: 0.875rem !important;
+  z-index: 1000 !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+  white-space: nowrap !important;
+  position: relative !important;
+  
+}
+
+/* Flecha del tooltip */
+.error-tooltip-label::before {
+  content: '' !important;
+  position: absolute !important;
+  top: -6px !important;
+  width: 0 !important;
+  height: 0 !important;
+  border-left: 6px solid transparent !important;
+  border-right: 6px solid transparent !important;
+  border-bottom: 6px solid var(--ion-color-danger) !important;
+}
+
+.multiline-tooltip {
+  white-space: normal !important;  
+  max-width: 280px !important;     
+  line-height: 1.4 !important;     
+  text-align: center !important;   
+}
+

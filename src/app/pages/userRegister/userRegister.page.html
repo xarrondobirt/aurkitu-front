@@ -1,23 +1,33 @@
 <ion-content [fullscreen]="true">
-   <!-- componente personalizado para la cabecera-->
-   <app-top-bar pagina="userRegister"></app-top-bar>
+  <!-- componente personalizado para la cabecera-->
+  <app-top-bar pagina="userRegister"></app-top-bar>
   <div class="contenido">
     <ion-img src="../assets/logo/Logo_Circulo.png"></ion-img>
     <h2>Registro</h2>
     <!-- formulario con los datos necesarios para registrar un nuevo usuario, validación para cada campo-->
     <form class="formulario" [formGroup]="formularioRegistro">
-        <ion-input fill="solid" type="text" required placeholder="Alias" [(ngModel)]="alias" name="alias" formControlName="alias" ></ion-input> 
-        <ion-label *ngIf="formularioRegistro.get('alias')?.invalid && formularioRegistro.get('alias')?.touched" color="danger">El alias debe tener entre 3 y 50 caracteres</ion-label>
 
-        <ion-input fill="solid" type="email" required  placeholder="Correo electrónico" [(ngModel)]="email" name="email" formControlName="email"></ion-input>
-        <ion-label *ngIf="formularioRegistro.get('email')?.invalid && formularioRegistro.get('email')?.touched" color="danger">Introduce un email válido</ion-label>
+      <ion-input fill="solid" type="text" required placeholder="Alias" [(ngModel)]="alias" name="alias"
+        formControlName="alias"></ion-input>
+      <ion-label *ngIf="formularioRegistro.get('alias')?.invalid && formularioRegistro.get('alias')?.touched"
+        color="danger" class="error-tooltip-label">El alias debe tener al menos 3 caracteres</ion-label>
 
-        <ion-input fill="solid" type="password" required  placeholder="Contraseña" [(ngModel)]="password" name="password" formControlName="password" (keyup.enter)="onSubmit()"></ion-input>
-        <div *ngIf="formularioRegistro.get('password')?.invalid && formularioRegistro.get('password')?.touched">
-          <ion-label class="ion-padding" *ngFor="let literal of this.literalesPassword" color="danger">
+      <ion-input fill="solid" type="email" required placeholder="Correo electrónico" [(ngModel)]="email" name="email"
+        formControlName="email"></ion-input>
+      <ion-label *ngIf="formularioRegistro.get('email')?.invalid && formularioRegistro.get('email')?.touched"
+        color="danger" class="error-tooltip-label">Introduce un email válido</ion-label>
+
+      <ion-input fill="solid" type="password" required placeholder="Contraseña" [(ngModel)]="password" name="password"
+        formControlName="password" (keyup.enter)="onSubmit()"></ion-input>
+      <!-- <div *ngIf="formularioRegistro.get('password')?.invalid && formularioRegistro.get('password')?.touched">
+          <ion-label class="ion-padding" *ngFor="let literal of this.literalesPassword" color="danger" class="error-tooltip-label">
             {{literal}}
           </ion-label>
-        </div>
+        </div> -->
+      <ion-label *ngIf="formularioRegistro.get('password')?.invalid && formularioRegistro.get('password')?.touched"
+        color="danger" class="error-tooltip-label multiline-tooltip">
+        Usa al menos 6 caracteres, con mayúsculas, minúsculas, números y caracteres especiales.
+      </ion-label>
     </form>
 
     <ion-button expand="block" [disabled]="formularioRegistro.invalid" (click)="onSubmit()">

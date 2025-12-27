@@ -29,13 +29,13 @@ export class UserRegisterPage {
       message: 'Longitud del código innadecuada'
     }
   };
-  // caracteristicas de la contraseña para mostrar en el tooltip
-  literalesPassword = [
-     '6 caracteres',
-     'Mayúscula y minúscula',
-     'Número',
-     'Carácter especial'
-  ];
+  // // caracteristicas de la contraseña para mostrar en el tooltip
+  // literalesPassword = [
+  //    '6 caracteres',
+  //    'Mayúscula y minúscula',
+  //    'Número',
+  //    'Carácter especial'
+  // ];
 
 
 
