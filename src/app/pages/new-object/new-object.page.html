@@ -9,7 +9,6 @@
     <form class="formulario" [formGroup]="formularioObjeto">
 
       <!-- Mapa -->
-      <!--<div id="map">-->
       <div>
         <div class="map-test-container">
           <aurkitu-map
@@ -27,17 +26,8 @@
           </div>
         }
       </div>
-      <!--</div>-->
 
-      <!-- Radio -->
-      <!--
-      <ion-input
-        fill="solid"
-        type="number"
-        placeholder="Radio (metros)"
-        formControlName="radio">
-      </ion-input>
--->
+
       <!-- Tipo de objeto (accordion) -->
       <ion-accordion-group #tipoAccordion>
         <ion-accordion value="tipoObjeto">
@@ -100,22 +90,69 @@
       </ion-accordion-group>
 
       <!-- Fecha -->
-       <!--
-      <ion-datetime
-        presentation="date-time"
-        formControlName="fechaPerdida">
-      </ion-datetime>
--->
       <ion-item>
-        <!--<ion-label position="floating">Fecha</ion-label>-->
         <ion-input type="date" formControlName="fecha"></ion-input>
       </ion-item>
 
+      <!-- Documentos -->
+      <!--<ion-text color="primary">
+        <h3>1. Foto del objeto</h3>
+      </ion-text>-->
+      <!-- Foto -->
+      <aurkitu-file-selector
+        type="image"
+        label="Foto de la galería"
+        (fileSelected)="onPhotoChange($event)"> </aurkitu-file-selector>
 
-      <!-- Botón [disabled]="formularioObjeto.invalid"-->
+      <!-- Factura -->
+      <!-- 
+      <ion-text color="primary">
+        <h3>2. Prueba documental</h3>
+        name="image-outline"
+        name="document-text-outline"
+      </ion-text>-->
+      <aurkitu-file-selector
+        type="document"
+        label="Adjuntar factura (PDF)"
+        (fileSelected)="onDocumentChange($event)"> </aurkitu-file-selector>
+
+      <div class="ion-margin-top">
+
+        @if (selectedPhoto) {
+          <p class="file-info">
+            <ion-icon  color="primary"></ion-icon>
+            <strong>Foto:</strong> {{ selectedPhoto.name }}
+            <small>({{ (selectedPhoto.size/1024).toFixed(1) }} KB)</small>
+          </p>
+        }
+
+        @if (selectedDocument) {
+          <p class="file-info">
+            <ion-icon  color="secondary"></ion-icon>
+            <strong>Doc:</strong> {{ selectedDocument.name }}
+            <small>({{ (selectedDocument.size/1024).toFixed(1) }} KB)</small>
+          </p>
+        }
+
+        <!--
+        <ion-button expand="block" (click)="enviarDatos()" >
+
+          @if (isSubmitting) {
+            <ion-spinner name="crescent"></ion-spinner>
+          }
+          @else {
+            <span>Enviar al Backend</span>
+          }
+
+        </ion-button>
+        -->
+
+      </div>
+      
+      <!-- Botón -->
       <ion-button
         expand="block"
-        
+        [disabled]="formularioObjeto.invalid"
         (click)="onSubmit()">
         Guardar objeto
       </ion-button>

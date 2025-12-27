@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AlertController, IonAccordionGroup } from '@ionic/angular';
+import { AlertController, IonAccordionGroup, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { ObjetoPerdidoService } from 'src/app/services/objeto-perdido';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { ObjetoPerdidoDTO, TipoObjeto, ColoresObjeto } from 'src/app/interfaces/objetos';
 
 
@@ -30,6 +31,11 @@ export class NewObjectPage implements OnInit {
   map!: L.Map;
   marker!: L.Marker;
 
+  // Ficheros
+  selectedPhoto: File | null = null;
+  selectedDocument: File | null = null;
+  isSubmitting = false;
+
   // Referencias a los acordeones
   @ViewChild('tipoAccordion') tipoAccordion!: IonAccordionGroup;
   @ViewChild('colorAccordion') colorAccordion!: IonAccordionGroup;
@@ -38,7 +44,9 @@ export class NewObjectPage implements OnInit {
     private formBuilder: FormBuilder,
     private objetoService: ObjetoPerdidoService,
     private alertController: AlertController,
-    private router: Router
+    private router: Router,
+    private toastCtrl: ToastController,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -139,9 +147,34 @@ export class NewObjectPage implements OnInit {
 
     console.log("OBJETO ENVIADO:", JSON.stringify(objeto, null, 2));
 
-    this.objetoService.crearObjetoPerdido(objeto).subscribe(
+    this.isSubmitting = true;
+    /*
+    const formData = new FormData();
+
+    if (this.selectedPhoto) {
+      formData.append('foto', this.selectedPhoto);
+    }
+    if (this.selectedDocument) {
+      formData.append('factura', this.selectedDocument);
+    }
+
+    const foto = this.selectedPhoto;
+    const doc = this.selectedDocument;*/
+
+    this.objetoService.crearObjetoPerdido(objeto, this.selectedPhoto ?? undefined, this.selectedDocument ?? undefined).subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        this.alertaCorrecto();
+      },
+      error: (error) => {
+        this.isSubmitting = false;
+        this.alertaError(error);
+      }
+    }
+
+      /*
       () => this.alertaCorrecto(),
-      error => this.alertaError(error)
+      error => this.alertaError(error)*/
     );
   }
 
@@ -164,5 +197,48 @@ export class NewObjectPage implements OnInit {
       buttons: ['Aceptar'],
     });
     await alert.present();
+  }
+
+  onPhotoChange(file: File | null) {
+    this.selectedPhoto = file;
+  }
+
+  onDocumentChange(file: File | null) {
+    this.selectedDocument = file;
+  }
+
+  /*
+   async enviarDatos() {
+
+    this.isSubmitting = true;
+    const formData = new FormData();
+
+    if (this.selectedPhoto) {
+      formData.append('foto', this.selectedPhoto);
+    }
+    if (this.selectedDocument) {
+      formData.append('factura', this.selectedDocument);
+    }
+
+    /*
+    this.http.post(this.urlAPI, formData, { headers }).subscribe({
+      next: (response) => {
+        console.log('Subida ok:', response);
+        this.mostrarToast('¡Objeto subido correctamente!', 'success');
+        this.isSubmitting = false;
+      },
+      error: (err) => {
+        console.error('Error en subida:', err);
+        const errorMsg = err.error?.message || err.statusText || 'Error desconocido';
+        this.mostrarToast(`Error: ${errorMsg}`, 'danger');
+        this.isSubmitting = false;
+      }
+    });
+    
+  }*/
+
+  async mostrarToast(msg: string, color: string) {
+    const t = await this.toastCtrl.create({ message: msg, duration: 3000, color });
+    t.present();
   }
 }

@@ -17,25 +17,23 @@ export class ObjetoPerdidoService {
 
   // Constructor. Inyectamos el servicio del token
   constructor(
-  private httpClient: HttpClient,
-  private tokenService: TokenService
-) {}
+    private httpClient: HttpClient,
+    private tokenService: TokenService
+  ) {}
 
 
-  // POST nuevo objeto
+  // POST nuevo objeto. Foto y documento opciones
   crearObjetoPerdido(request: ObjetoPerdidoDTO, foto?: File, doc?: File): Observable<any> {
     //return this.http.post(this.urlAPI, objeto);
 
     console.log(this.urlAPI);
     console.log(request);
     
-
+    // tokens
     const headers = new HttpHeaders({
     //  'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + this.tokenService.getAccessToken()
     });
-
-
 
     // formamos el url de la llamada
     let urlSetObject: string = this.urlAPI + '/guardar';
@@ -54,36 +52,35 @@ export class ObjetoPerdidoService {
       if (doc) formData.append('factura', doc);
       
       return this.httpClient.post(urlSetObject, formData,{ headers });
-    
-    //return this.httpClient.post(urlSetObject, request,{ headers });
-
   }
+
 
   // GET tipos de objeto
   obtenerTiposObjeto(): Observable<TipoObjeto[]> {
-  // formamos la URL del endpoint
-  const urlGetTipos: string = this.urlAPI + '/obtener-tipos';
+    // formamos la URL del endpoint
+    const urlGetTipos: string = this.urlAPI + '/obtener-tipos';
 
-  const headers = new HttpHeaders({
-    'Authorization': 'Bearer ' + this.tokenService.getAccessToken()
-  });
+    // tokens
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.tokenService.getAccessToken()
+    });
 
-  return this.httpClient.get<TipoObjeto[]>(urlGetTipos, { headers });
+    return this.httpClient.get<TipoObjeto[]>(urlGetTipos, { headers });
   }
 
+  
   // GET tipos de objeto
   obtenerColoresObjeto(): Observable<TipoObjeto[]> {
-  // formamos la URL del endpoint
-  const urlGetTipos: string = this.urlAPI + '/obtener-colores';
+    // formamos la URL del endpoint
+    const urlGetTipos: string = this.urlAPI + '/obtener-colores';
 
-  const headers = new HttpHeaders({
-    'Authorization': 'Bearer ' + this.tokenService.getAccessToken()
-  });
+    // tokens
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.tokenService.getAccessToken()
+    });
 
-  return this.httpClient.get<TipoObjeto[]>(urlGetTipos, { headers });
+    return this.httpClient.get<TipoObjeto[]>(urlGetTipos, { headers });
   }
 }
-
-
 
 
