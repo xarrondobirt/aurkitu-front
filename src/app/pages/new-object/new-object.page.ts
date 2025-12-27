@@ -4,7 +4,7 @@ import { AlertController, IonAccordionGroup } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { ObjetoPerdidoService } from 'src/app/services/objeto-perdido';
 import { ObjetoPerdidoDTO, TipoObjeto, ColoresObjeto } from 'src/app/interfaces/objetos';
-import * as L from 'leaflet';
+
 
 @Component({
   selector: 'app-new-object',
@@ -15,6 +15,9 @@ import * as L from 'leaflet';
 export class NewObjectPage implements OnInit {
 
   formularioObjeto!: FormGroup;
+
+  // Guardan los datos que devuelve el mapa
+  resultadoBusqueda: any = null;
 
   tiposObjeto: TipoObjeto[] = [];
   coloresObjeto: ColoresObjeto[] = [];
@@ -40,15 +43,17 @@ export class NewObjectPage implements OnInit {
 
   ngOnInit() {
     this.formularioObjeto = this.formBuilder.group({
-      lat: [null, Validators.required],
-      lng: [null, Validators.required],
+      ubicacion: this.formBuilder.group ({
+        latitud: [null, Validators.required],
+        longitud: [null, Validators.required],
+      }),
       radio: [null, [Validators.required, Validators.pattern('^[0-9]+$')]],
       idTipoObjeto: [null, Validators.required],
       descripcion: ['', Validators.required],
       marca: [''],
-      numSerie: [''],
+      serie: [''],
       idColor: [null, Validators.required],
-      fechaPerdida: ['', Validators.required],
+      fecha: ['', Validators.required],
     });
 
     // Actualizar texto cuando cambian los valores
@@ -88,6 +93,22 @@ export class NewObjectPage implements OnInit {
     });
   }
 
+  // HANDLERS PARA CAPTURAR LOS EVENTOS DEL MAPA
+  // Para el mapa de Búsqueda
+  handleSearchChange(event: any) {
+    this.resultadoBusqueda = event;
+    console.log('Datos Búsqueda:', event);
+
+    // Suponiendo que el evento trae event.lat y event.lng
+    this.formularioObjeto.patchValue({
+      ubicacion: {
+        latitud: event.lat,
+        longitud: event.lng
+      },
+      radio: event.radius
+    });
+  }
+
   // Métodos para seleccionar tipo y color y cerrar el acordeón
   seleccionarTipo(tipo: TipoObjeto) {
     this.formularioObjeto.patchValue({ idTipoObjeto: tipo.id });
@@ -106,12 +127,17 @@ export class NewObjectPage implements OnInit {
   }
 
   async onSubmit() {
-    if (this.formularioObjeto.invalid) return;
+    /*if (this.formularioObjeto.invalid) {
+      console.log("Formulario inválido:", this.formularioObjeto.value);
+    return;
+  }*/
 
     const objeto: ObjetoPerdidoDTO = this.formularioObjeto.value;
     objeto.marca = objeto.marca || '';
-    objeto.numSerie = objeto.numSerie || '';
-    objeto.fechaPerdida = new Date(objeto.fechaPerdida).toISOString();
+    objeto.serie = objeto.serie || '';
+    objeto.fecha = new Date(objeto.fecha).toISOString();
+
+    console.log("OBJETO ENVIADO:", JSON.stringify(objeto, null, 2));
 
     this.objetoService.crearObjetoPerdido(objeto).subscribe(
       () => this.alertaCorrecto(),

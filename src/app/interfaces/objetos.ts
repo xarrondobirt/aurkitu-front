@@ -4,9 +4,9 @@ export interface ObjetoPerdidoDTO {
   idTipoObjeto: number;
   descripcion: string;
   marca?: string;
-  numSerie?: string;
+  serie?: string;
   idColor: number;
-  fechaPerdida: string;
+  fecha: string;
 }
 
 export interface TipoObjeto {

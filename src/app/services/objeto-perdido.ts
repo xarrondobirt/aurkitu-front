@@ -23,19 +23,39 @@ export class ObjetoPerdidoService {
 
 
   // POST nuevo objeto
-  crearObjetoPerdido(request: ObjetoPerdidoDTO): Observable<any> {
+  crearObjetoPerdido(request: ObjetoPerdidoDTO, foto?: File, doc?: File): Observable<any> {
     //return this.http.post(this.urlAPI, objeto);
 
     console.log(this.urlAPI);
+    console.log(request);
+    
+
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
+    //  'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + this.tokenService.getAccessToken()
     });
 
+
+
     // formamos el url de la llamada
     let urlSetObject: string = this.urlAPI + '/guardar';
+
+
+      const formData = new FormData();
+  
+      // JSON con tipo específico
+      const jsonBlob = new Blob([JSON.stringify(request)], { type: 'application/json' });
+      formData.append('objeto', jsonBlob);
+
+      console.log(jsonBlob.type);
+      
+      // Archivos opcionales
+      if (foto) formData.append('foto', foto);
+      if (doc) formData.append('factura', doc);
+      
+      return this.httpClient.post(urlSetObject, formData,{ headers });
     
-    return this.httpClient.post<any>(urlSetObject, request,{ headers });
+    //return this.httpClient.post(urlSetObject, request,{ headers });
 
   }
 
