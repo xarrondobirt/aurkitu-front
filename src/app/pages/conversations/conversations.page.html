@@ -22,9 +22,8 @@
               <ion-img src="../assets/icon/sobre.png" class="imagen" *ngIf="conver.mensajesSinLeer == false" class="carta" alt="imagen sin mensajes pendientes"></ion-img>
               <ion-img src="../assets/icon/sobre_notificacion.png" class="imagen" *ngIf="conver.mensajesSinLeer == true" class="carta" alt="imagen con mensajes pendientes"></ion-img>
             </ion-col>
-            <!-- TODO obtener el tipo de objeto-->
             <ion-col size="3">
-              <ion-label>TIPO DE OBJETO</ion-label>
+              <ion-label>{{conver.tipoObjeto}}</ion-label>
             </ion-col>
             <ion-col size="3">
               <ion-label>{{conver.participante.username}}</ion-label>

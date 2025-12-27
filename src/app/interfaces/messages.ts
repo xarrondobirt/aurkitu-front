@@ -15,7 +15,7 @@ export interface SesionDTO{
 export interface ConversacionResponse{
     id: number,
     participante: SesionDTO,
-    idObjeto: number,
+    tipoObjeto: string,
     createDate: Date,
     lastUpdateDate: Date,
     mensajesSinLeer: boolean
