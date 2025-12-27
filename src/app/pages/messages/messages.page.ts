@@ -40,16 +40,14 @@ export class MessagesPage implements OnInit {
       // obtenemos los mensajes de la conversacion
       this.getMensajesConversacion(this.conversacion.id);
     }
-
   }
   // obtener la conversación al pasar en desde la página anterior
   obtenerConversacion() {
     const navigation = this.ruta.getCurrentNavigation();
 
-    this.conversacion= navigation?.extras.state?.['conversacion'];
+    this.conversacion = navigation?.extras.state?.['conversacion'];
     
     console.log('Conversacion ', this.conversacion);
-    
   }
 
   // método para obtener los mensajes de la conversacion
