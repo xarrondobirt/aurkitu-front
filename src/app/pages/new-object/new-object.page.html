@@ -1,0 +1,126 @@
+<ion-content [fullscreen]="true">
+  <!-- componente personalizado para la cabecera-->
+  <app-top-bar></app-top-bar>
+
+  <div class="contenido">
+
+    <h2>Nuevo objeto perdido</h2>
+
+    <form class="formulario" [formGroup]="formularioObjeto">
+
+      <!-- Mapa -->
+      <!--<div id="map">-->
+      <div>
+        <div class="map-test-container">
+          <aurkitu-map
+            useCase="SEARCH"
+            [initialRadius]="500"
+            (locationChange)="handleSearchChange($event)">
+          </aurkitu-map>
+        </div>
+
+        @if (resultadoBusqueda) {
+          <div class="debug-box">
+            Lat: {{ resultadoBusqueda.lat | number:'1.4-4' }} <br>
+            Lng: {{ resultadoBusqueda.lng | number:'1.4-4' }} <br>
+            Radio: {{ resultadoBusqueda.radius }}m
+          </div>
+        }
+      </div>
+      <!--</div>-->
+
+      <!-- Radio -->
+      <!--
+      <ion-input
+        fill="solid"
+        type="number"
+        placeholder="Radio (metros)"
+        formControlName="radio">
+      </ion-input>
+-->
+      <!-- Tipo de objeto (accordion) -->
+      <ion-accordion-group #tipoAccordion>
+        <ion-accordion value="tipoObjeto">
+          <ion-item slot="header">
+            <ion-label>{{ tipoSeleccionadoTexto }}</ion-label>
+          </ion-item>
+
+          <div slot="content">
+            <ion-list>
+              <ion-item
+                button
+                *ngFor="let tipo of tiposObjeto"
+                (click)="seleccionarTipo(tipo)">
+                {{ tipo.descripcion }}
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+
+      <!-- Descripción -->
+      <ion-textarea
+        fill="solid"
+        placeholder="Descripción"
+        formControlName="descripcion">
+      </ion-textarea>
+
+      <!-- Marca -->
+      <ion-input
+        fill="solid"
+        placeholder="Marca"
+        formControlName="marca">
+      </ion-input>
+
+      <!-- Número de serie -->
+      <ion-input
+        fill="solid"
+        placeholder="Número de serie"
+        formControlName="serie">
+      </ion-input>
+
+      <!-- Color (accordion) -->
+      <ion-accordion-group #colorAccordion>
+        <ion-accordion value="colorObjeto">
+          <ion-item slot="header">
+            <ion-label>{{ colorSeleccionadoTexto }}</ion-label>
+          </ion-item>
+
+          <div slot="content">
+            <ion-list>
+              <ion-item
+                button
+                *ngFor="let color of coloresObjeto"
+                (click)="seleccionarColor(color)">
+                {{ color.descripcion }}
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+
+      <!-- Fecha -->
+       <!--
+      <ion-datetime
+        presentation="date-time"
+        formControlName="fechaPerdida">
+      </ion-datetime>
+-->
+      <ion-item>
+        <!--<ion-label position="floating">Fecha</ion-label>-->
+        <ion-input type="date" formControlName="fecha"></ion-input>
+      </ion-item>
+
+
+      <!-- Botón [disabled]="formularioObjeto.invalid"-->
+      <ion-button
+        expand="block"
+        
+        (click)="onSubmit()">
+        Guardar objeto
+      </ion-button>
+
+    </form>
+
+  </div>
+</ion-content>
