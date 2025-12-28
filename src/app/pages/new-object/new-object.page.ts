@@ -15,31 +15,34 @@ import { ObjetoPerdidoDTO, TipoObjeto, ColoresObjeto } from 'src/app/interfaces/
 })
 export class NewObjectPage implements OnInit {
 
+  // Formulario de nuevo objeto
   formularioObjeto!: FormGroup;
 
-  // Guardan los datos que devuelve el mapa
+  // Guardan los datos de ubicación que devuelve el mapa
   resultadoBusqueda: any = null;
 
+  // Dropdown de tipo de objeto y colores
   tiposObjeto: TipoObjeto[] = [];
   coloresObjeto: ColoresObjeto[] = [];
 
-  // Textos visibles en los accordion
+  // Textos visibles en los accordion (drop down)
   tipoSeleccionadoTexto = 'Tipo de objeto';
   colorSeleccionadoTexto = 'Color';
 
+  // Referencias a los acordeones (drop down) para cerrarlos desde el ts
+  @ViewChild('tipoAccordion') tipoAccordion!: IonAccordionGroup;
+  @ViewChild('colorAccordion') colorAccordion!: IonAccordionGroup;
+
   // Mapa
-  map!: L.Map;
-  marker!: L.Marker;
+  //map!: L.Map;
+  //marker!: L.Marker;
 
   // Ficheros
   selectedPhoto: File | null = null;
   selectedDocument: File | null = null;
   isSubmitting = false;
 
-  // Referencias a los acordeones
-  @ViewChild('tipoAccordion') tipoAccordion!: IonAccordionGroup;
-  @ViewChild('colorAccordion') colorAccordion!: IonAccordionGroup;
-
+  // Constructor
   constructor(
     private formBuilder: FormBuilder,
     private objetoService: ObjetoPerdidoService,
@@ -49,7 +52,14 @@ export class NewObjectPage implements OnInit {
     private http: HttpClient
   ) {}
 
+  // Al iniciar
   ngOnInit() {
+
+    // Fecha hoy por defecto = Hoy
+    const hoy = new Date();
+    const fechaHoy = hoy.toISOString().split('T')[0]; // formato YYYY-MM-DD
+
+    // Campos del formulario y valores por defecto
     this.formularioObjeto = this.formBuilder.group({
       ubicacion: this.formBuilder.group ({
         latitud: [null, Validators.required],
@@ -61,7 +71,7 @@ export class NewObjectPage implements OnInit {
       marca: [''],
       serie: [''],
       idColor: [null, Validators.required],
-      fecha: ['', Validators.required],
+      fecha: [fechaHoy, Validators.required],
     });
 
     // Actualizar texto cuando cambian los valores
@@ -75,7 +85,7 @@ export class NewObjectPage implements OnInit {
       this.colorSeleccionadoTexto = color ? color.descripcion : 'Color';
     });
 
-    // Cargar datos desde backend
+    // Cargar datos desde backend de tipos de objeto
     this.objetoService.obtenerTiposObjeto().subscribe({
       next: tipos => {
         this.tiposObjeto = tipos;
@@ -88,6 +98,7 @@ export class NewObjectPage implements OnInit {
       error: err => console.error('Error cargando tipos de objeto', err)
     });
 
+    // Cargar datos desde backend de colores de objeto
     this.objetoService.obtenerColoresObjeto().subscribe({
       next: colores => {
         this.coloresObjeto = colores;
@@ -101,13 +112,12 @@ export class NewObjectPage implements OnInit {
     });
   }
 
-  // HANDLERS PARA CAPTURAR LOS EVENTOS DEL MAPA
-  // Para el mapa de Búsqueda
+  // handle captura eventos del mapa
   handleSearchChange(event: any) {
     this.resultadoBusqueda = event;
     console.log('Datos Búsqueda:', event);
 
-    // Suponiendo que el evento trae event.lat y event.lng
+    // Actualización de valores de latitud, longitud y radio
     this.formularioObjeto.patchValue({
       ubicacion: {
         latitud: event.lat,
@@ -117,7 +127,7 @@ export class NewObjectPage implements OnInit {
     });
   }
 
-  // Métodos para seleccionar tipo y color y cerrar el acordeón
+  // Métodos para seleccionar tipo y cerrar el acordeón
   seleccionarTipo(tipo: TipoObjeto) {
     this.formularioObjeto.patchValue({ idTipoObjeto: tipo.id });
     this.tipoSeleccionadoTexto = tipo.descripcion;
@@ -126,6 +136,7 @@ export class NewObjectPage implements OnInit {
     this.tipoAccordion.value = undefined;
   }
 
+  // Métodos para seleccionar colores y cerrar el acordeón
   seleccionarColor(color: ColoresObjeto) {
     this.formularioObjeto.patchValue({ idColor: color.id });
     this.colorSeleccionadoTexto = color.descripcion;
@@ -134,12 +145,15 @@ export class NewObjectPage implements OnInit {
     this.colorAccordion.value = undefined;
   }
 
+  // Al pulsar el botón
   async onSubmit() {
-    /*if (this.formularioObjeto.invalid) {
+    // Controlar si el formulario es válido
+    if (this.formularioObjeto.invalid) {
       console.log("Formulario inválido:", this.formularioObjeto.value);
     return;
-  }*/
+    }
 
+    // Adaptar valores al DTO para el envío a back
     const objeto: ObjetoPerdidoDTO = this.formularioObjeto.value;
     objeto.marca = objeto.marca || '';
     objeto.serie = objeto.serie || '';
@@ -147,20 +161,10 @@ export class NewObjectPage implements OnInit {
 
     console.log("OBJETO ENVIADO:", JSON.stringify(objeto, null, 2));
 
+    // Control ficheros
     this.isSubmitting = true;
-    /*
-    const formData = new FormData();
 
-    if (this.selectedPhoto) {
-      formData.append('foto', this.selectedPhoto);
-    }
-    if (this.selectedDocument) {
-      formData.append('factura', this.selectedDocument);
-    }
-
-    const foto = this.selectedPhoto;
-    const doc = this.selectedDocument;*/
-
+    // Envío a back a través del servicio
     this.objetoService.crearObjetoPerdido(objeto, this.selectedPhoto ?? undefined, this.selectedDocument ?? undefined).subscribe({
       next: () => {
         this.isSubmitting = false;
@@ -170,14 +174,10 @@ export class NewObjectPage implements OnInit {
         this.isSubmitting = false;
         this.alertaError(error);
       }
-    }
-
-      /*
-      () => this.alertaCorrecto(),
-      error => this.alertaError(error)*/
-    );
+    });
   }
 
+  // Alerta exito
   async alertaCorrecto() {
     const alert = await this.alertController.create({
       header: 'Objeto registrado',
@@ -190,6 +190,7 @@ export class NewObjectPage implements OnInit {
     await alert.present();
   }
 
+  // Alerta error
   async alertaError(error: any) {
     const alert = await this.alertController.create({
       header: 'Error',
@@ -199,46 +200,20 @@ export class NewObjectPage implements OnInit {
     await alert.present();
   }
 
+  // Handler fichero foto
   onPhotoChange(file: File | null) {
     this.selectedPhoto = file;
   }
 
+  // Handler fichero factura
   onDocumentChange(file: File | null) {
     this.selectedDocument = file;
   }
 
   /*
-   async enviarDatos() {
-
-    this.isSubmitting = true;
-    const formData = new FormData();
-
-    if (this.selectedPhoto) {
-      formData.append('foto', this.selectedPhoto);
-    }
-    if (this.selectedDocument) {
-      formData.append('factura', this.selectedDocument);
-    }
-
-    /*
-    this.http.post(this.urlAPI, formData, { headers }).subscribe({
-      next: (response) => {
-        console.log('Subida ok:', response);
-        this.mostrarToast('¡Objeto subido correctamente!', 'success');
-        this.isSubmitting = false;
-      },
-      error: (err) => {
-        console.error('Error en subida:', err);
-        const errorMsg = err.error?.message || err.statusText || 'Error desconocido';
-        this.mostrarToast(`Error: ${errorMsg}`, 'danger');
-        this.isSubmitting = false;
-      }
-    });
-    
-  }*/
-
   async mostrarToast(msg: string, color: string) {
     const t = await this.toastCtrl.create({ message: msg, duration: 3000, color });
     t.present();
   }
+  */
 }
