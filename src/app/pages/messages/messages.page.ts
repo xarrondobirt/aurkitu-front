@@ -42,16 +42,14 @@ export class MessagesPage implements OnInit {
       // obtenemos los mensajes de la conversacion
       this.getMensajesConversacion(this.conversacion.id);
     }
-
   }
   // obtener la conversación al pasar en desde la página anterior
   obtenerConversacion() {
     const navigation = this.ruta.getCurrentNavigation();
 
-    this.conversacion= navigation?.extras.state?.['conversacion'];
+    this.conversacion = navigation?.extras.state?.['conversacion'];
     
     console.log('Conversacion ', this.conversacion);
-    
   }
 
   // método para obtener los mensajes de la conversacion
@@ -103,7 +101,7 @@ export class MessagesPage implements OnInit {
       
       
       let requestToken: MensajesRequest = {
-        accessToken: this.tokensLocal.accessTokenLocal
+        accessToken: this.tokensLocal.accessToken
       };
       // llamada al servicio para enviar el mensaje
       const promesa = new Promise<MensajesResponse>((resolve, reject) => {
@@ -117,7 +115,12 @@ export class MessagesPage implements OnInit {
           },
           error: (error) => {
             console.error('Error sendMensaje:', error);
-            reject(error);
+            
+            if(error.error.status == 401 && this.refrescado == false){
+              this.refrescado = true;
+              // refrescar el token
+              this.authenticationService.refrescarToken(this.tokensLocal);
+            }
           },
         });
       });
