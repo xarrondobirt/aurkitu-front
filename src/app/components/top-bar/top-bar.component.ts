@@ -33,7 +33,7 @@ export class TopBarComponent  implements OnInit {
   tokensLocal: any;
   listaConversacionesPdtes: ConversacionResponse[] = [];
   // añadir más paginas cuando se hayan generado
-  @Input() pagina!: 'menu' | 'conversations' | 'messages' | 'login' | 'userRegister' | 'resetPassword' |'newObject' | 'objectFilter' |'forgotPassword';
+  @Input() pagina!: 'menu' | 'conversations' | 'messages' | 'login' | 'userRegister' | 'resetPassword' |'newObject' | 'objectFilter' |'forgotPassword' |'inventarioObjetos';
   // array con la configuración de cada pagina
   configuracionPaginas: configuracionPag[] = [];
   // configuración de la pagina actual
@@ -65,6 +65,7 @@ export class TopBarComponent  implements OnInit {
     this.cargarConfiguracionPagina('userRegister',false, false, true, false);
     this.cargarConfiguracionPagina('resetPassword',false, false, true, false);
     this.cargarConfiguracionPagina('forgotPassword',false, false, true, false);
+    this.cargarConfiguracionPagina('inventarioObjetos', true, false, false, false);
 
     console.log(this.configuracionPaginas);
 
