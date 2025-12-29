@@ -74,6 +74,21 @@ export class ObjetoPerdidoService {
 
     return this.httpClient.get<TipoObjeto[]>(urlGetTipos, { headers });
   }
+
+  // POST buscar objetos perdidos
+  buscarObjetos(filtros: any) {
+    // formamos la URL del endpoint
+    const urlBuscarObjetos: string = this.urlAPI + '/buscar';
+
+    // tokens
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.tokenService.getAccessToken()
+    });
+
+    return this.httpClient.post(urlBuscarObjetos, filtros,{ headers });
+  }
+  
+
 }
 
 
