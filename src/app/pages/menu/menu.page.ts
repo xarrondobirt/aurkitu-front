@@ -29,6 +29,6 @@ export class MenuPage implements OnInit{
   // TODO - método que llevará a la página del catálogo de objetos perdidos registrados
   goLostCatalog() {
     // TODO - Ir a objetos perdidos
-    // this.router.navigate(['/login']);
+    this.ruta.navigate(['/inventario-objetos']);
   }
 }

@@ -25,7 +25,11 @@ const routes: Routes = [
   {
     path: 'new-object',
     loadChildren: () => import('./pages/new-object/new-object.module').then( m => m.NewObjectPageModule)
+  },  {
+    path: 'inventario-objetos',
+    loadChildren: () => import('./pages/inventario-objetos/inventario-objetos.module').then( m => m.InventarioObjetosPageModule)
   },
+
 
 ];
 

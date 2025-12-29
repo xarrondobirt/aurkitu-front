@@ -1,0 +1,101 @@
+<ion-content [fullscreen]="true">
+  <app-top-bar pagina="inventarioObjetos"></app-top-bar>
+
+  <div class="contenido">
+    <h2>Inventario de objetos</h2>
+
+    <form [formGroup]="formBusqueda">
+
+      <!-- MAPA -->
+      <div class="map-test-container">
+        <aurkitu-map
+          useCase="SEARCH"
+          [initialRadius]="500"
+          (locationChange)="handleSearchChange($event)">
+        </aurkitu-map>
+      </div>
+
+      <!-- Info de debug -->
+      <div class="debug-box" *ngIf="formBusqueda.valid">
+        Lat: {{ formBusqueda.value.ubicacion.latitud }} |
+        Lng: {{ formBusqueda.value.ubicacion.longitud }} |
+        Radio: {{ formBusqueda.value.radio }}m
+      </div>
+
+      <!-- FILTRO POR TIPO -->
+      <ion-accordion-group #tipoAccordion>
+        <ion-accordion value="tipoObjeto">
+          <ion-item slot="header">
+            <ion-label>{{ tipoSeleccionadoTexto }}</ion-label>
+          </ion-item>
+          <div slot="content">
+            <ion-list>
+              <ion-item button *ngFor="let tipo of tiposObjeto"
+                (click)="seleccionarTipo(tipo)">
+                {{ tipo.descripcion }}
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+
+      <!-- BOTÓN -->
+      <ion-button expand="block"
+                  [disabled]="formBusqueda.invalid"
+                  (click)="buscarObjetos()">
+        Buscar objetos
+      </ion-button>
+
+    </form>
+
+    <!-- RESULTADOS EN ACCORDION -->
+    <ion-accordion-group *ngIf="objetos.length > 0" class="lista-objetos">
+      <ion-accordion *ngFor="let obj of objetos" [value]="obj.id">
+
+        <!-- HEADER: Foto + descripción + fecha -->
+        <ion-item slot="header" class="resultado-header">
+          <ion-thumbnail slot="start" *ngIf="obj.foto">
+            <!--<img [src]="environment.apiUrl + '/uploads/fotos/' + obj.foto" -->
+            <img [src]="obj?.foto ? environment.apiUrl + '/uploads/fotos/' + obj.foto : 'assets/no-image.png'"
+            (error)="onImageError($event)"
+            alt="foto objeto" />
+          </ion-thumbnail>
+          <ion-label>
+            <h3>{{ obj.descripcion }}</h3>
+            <p>📅 {{ obj.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+            <small>{{ obj.tipo?.descripcion }} - {{ obj.color?.descripcion }}</small>
+          </ion-label>
+        </ion-item>
+
+        <!-- CONTENIDO: toda la información -->
+        <div slot="content" class="resultado-detalle">
+          <p><strong>ID:</strong> {{ obj.id }}</p>
+          <p><strong>Marca:</strong> {{ obj.marca || '---' }}</p>
+          <p><strong>Serie:</strong> {{ obj.serie || '---' }}</p>
+          <p><strong>Estado:</strong> {{ obj.estado?.descripcion }}</p>
+          <p><strong>Radio búsqueda:</strong> {{ obj.radio }}m</p>
+          <p><strong>Usuario:</strong> {{ obj.usuario?.username }}</p>
+          <p><strong>Ubicación:</strong> 
+            {{ obj.ubicacion?.latitud }}, {{ obj.ubicacion?.longitud }}
+          </p>
+          <!-- Foto detalle -->
+          <div *ngIf="obj.foto">
+            <!--<img [src]="'https://TU_API_URL/fotos/' + obj.foto" class="detalle-foto" />-->
+            <img [src]="environment.apiUrl + '/uploads/fotos/' + obj.foto" class="detalle-foto" />
+          </div>
+          <!-- Factura si existe -->
+          <div *ngIf="obj.factura">
+            <a [href]="environment.apiUrl + '/uploads/docs/' + obj.factura" target="_blank">📄 Ver factura</a>
+          </div>
+        </div>
+
+      </ion-accordion>
+    </ion-accordion-group>
+
+    <!-- Mensaje sin resultados -->
+    <p *ngIf="busquedaRealizada && objetos.length === 0" style="text-align:center; margin-top:20px;">
+      ❌ No se encontraron objetos perdidos con esos filtros.
+    </p>
+
+  </div>
+</ion-content>
