@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
-import { MensajesRequest, ConversacionResponse, SetMensajeRequest, MensajesResponse } from '../interfaces/messages';
+import { MensajesRequest, ConversacionResponse, SetMensajeRequest, MensajesResponse, ConversacionDetalleResponse } from '../interfaces/messages';
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +38,7 @@ export class MensajesService {
     let urlGetMensajes = this.urlAPI + '/conversacion/' + idConversacion + '/mensajes';
     console.log(urlGetMensajes);
     
-    const respuesta = this.httpClient.get<ConversacionResponse[]>(urlGetMensajes, {headers});
+    const respuesta = this.httpClient.get<ConversacionDetalleResponse[]>(urlGetMensajes, {headers});
     return respuesta;
   }
 
