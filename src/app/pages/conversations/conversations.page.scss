@@ -16,6 +16,7 @@
     width: 80%;
     max-width: 800px;
     min-width: 100px;
+    overflow-x: auto;
 }
 
 .carta{
@@ -37,4 +38,9 @@ ion-row {
 
 ion-card-title{
     text-align: center;
+}
+
+ion-col{
+    text-align: center;
+    justify-items: center;
 }

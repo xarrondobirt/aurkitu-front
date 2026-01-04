@@ -54,4 +54,17 @@ export class MensajesService {
     const respuesta = this.httpClient.post<MensajesResponse>(urlSetMensaje, requestMensaje, {headers});
     return respuesta;
   }
+
+  // método para cerrar el caso del objeto perdido
+  cerrarCaso(idObjeto: number, request: MensajesRequest): Observable<MensajesResponse>{
+    const headers = new HttpHeaders({
+      Authorization: 'Bearer ' + request.accessToken
+    });
+
+    let urlCerrarCaso = this.urlAPI + '/cerrar-caso/'+ idObjeto;
+    console.log(urlCerrarCaso);
+    
+    const respuesta = this.httpClient.put<MensajesResponse>(urlCerrarCaso, request, {headers});
+    return respuesta;
+  }
 }

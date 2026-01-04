@@ -45,7 +45,6 @@
   --aurkitu-fondo: #F2DEC6;
 }
 
-/* 27/10/2025 - (LF) Colores globales del fondo y botones*/
 ion-content {
   --background: var(--aurkitu-fondo);
 }
@@ -95,3 +94,16 @@ ion-button {
   text-align: center !important;   
 }
 
+.notificacionToast{
+  --border-radius: 8px;        /* forma cuadrada */
+  --min-width: 220px;
+  --max-width: 280px;
+  --background: #EC7445;       /* color fondo */
+  --color: #ffffff;            /* color texto */
+  text-align: center;
+}
+
+
+.mayusculas {
+  text-transform: uppercase;
+}
