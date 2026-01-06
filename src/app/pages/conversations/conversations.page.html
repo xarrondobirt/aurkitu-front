@@ -9,33 +9,33 @@
         <ion-card-title>Conversaciones</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-grid>
-          <ion-row *ngIf="this.listaConversaciones.length > 0">
+        <ion-grid class="scroll">
+          <ion-row *ngIf="this.listaConversaciones.length > 0" class="fila">
             <ion-col class="titulo">Estado</ion-col>
             <ion-col class="titulo">Tipo de objeto</ion-col>
             <ion-col class="titulo">Usuario</ion-col>
             <ion-col class="titulo">Último mensaje</ion-col>
             <ion-col class="titulo">Estado del caso</ion-col>
           </ion-row>
-          <ion-row *ngFor="let conver of this.listaConversaciones">
-            <ion-col  (click)="this.verConversacion(conver)"> 
+          <ion-row *ngFor="let conver of this.listaConversaciones" class="fila">
+            <ion-col  (click)="this.verConversacion(conver)" class="columna"> 
               <!-- dependiendo de si hay mensajes pendientes, se muestra un icono u otro-->
               <ion-img src="../assets/icon/sobre.png" class="imagen" *ngIf="conver.mensajesSinLeer == false" class="carta" alt="imagen sin mensajes pendientes"></ion-img>
               <ion-img src="../assets/icon/sobre_notificacion.png" class="imagen" *ngIf="conver.mensajesSinLeer == true" class="carta" alt="imagen con mensajes pendientes"></ion-img>
             </ion-col>
-            <ion-col  (click)="this.verConversacion(conver)">
+            <ion-col  (click)="this.verConversacion(conver)" class="columna">
               <ion-label>{{conver.tipoObjeto}}</ion-label>
             </ion-col>
-            <ion-col  (click)="this.verConversacion(conver)">
+            <ion-col  (click)="this.verConversacion(conver)" class="columna">
               <ion-label>{{conver.participante.username}}</ion-label>
             </ion-col>
-            <ion-col (click)="this.verConversacion(conver)"> 
+            <ion-col (click)="this.verConversacion(conver)" class="columna"> 
               <ion-label>{{conver.lastUpdateDate | date:'dd/MM/yyyy HH:mm' }}</ion-label>
             </ion-col>
-            <ion-col *ngIf="conver.btnCerrarCaso"> 
+            <ion-col *ngIf="conver.btnCerrarCaso" class="columna"> 
               <ion-button (click)="this.cerrarCasoObjeto(conver.idObjeto)">Cerrar caso</ion-button>
             </ion-col>
-            <ion-col *ngIf="!conver.btnCerrarCaso" (click)="this.verConversacion(conver)"> 
+            <ion-col *ngIf="!conver.btnCerrarCaso" (click)="this.verConversacion(conver)" class="columna"> 
               <ion-label>Cerrado</ion-label>
             </ion-col>
           </ion-row>
