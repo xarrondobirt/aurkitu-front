@@ -17,13 +17,13 @@
 
       <!-- Info de debug -->
       <div class="debug-box" *ngIf="formBusqueda.valid">
-        Lat: {{ formBusqueda.value.ubicacion.latitud }} |
-        Lng: {{ formBusqueda.value.ubicacion.longitud }} |
+        Lat: {{ formBusqueda.value.ubicacion.latitud | number:'1.4-4'}} <br>
+        Lng: {{ formBusqueda.value.ubicacion.longitud | number:'1.4-4'}} <br>
         Radio: {{ formBusqueda.value.radio }}m
       </div>
 
       <!-- FILTRO POR TIPO -->
-      <ion-accordion-group #tipoAccordion>
+      <ion-accordion-group #tipoAccordion class="filtrosBusqueda">
         <ion-accordion value="tipoObjeto">
           <ion-item slot="header">
             <ion-label>{{ tipoSeleccionadoTexto }}</ion-label>
@@ -33,6 +33,26 @@
               <ion-item button *ngFor="let tipo of tiposObjeto"
                 (click)="seleccionarTipo(tipo)">
                 {{ tipo.descripcion }}
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+
+      <!-- FILTRO POR FECHA -->
+      <ion-accordion-group #fechaAccordion class="filtrosBusqueda">
+        <ion-accordion value="fechaFiltro">
+          <ion-item slot="header">
+            <ion-label>{{ fechaSeleccionadaTexto }}</ion-label>
+          </ion-item>
+
+          <div slot="content">
+            <ion-list>
+              <ion-item
+                button
+                *ngFor="let filtro of filtrosFecha"
+                (click)="seleccionarFiltroFecha(filtro)">
+                {{ filtro.label }}
               </ion-item>
             </ion-list>
           </div>
@@ -52,39 +72,51 @@
     <ion-accordion-group *ngIf="objetos.length > 0" class="lista-objetos">
       <ion-accordion *ngFor="let obj of objetos" [value]="obj.id">
 
-        <!-- HEADER: Foto + descripción + fecha -->
+        <!-- HEADER: Foto + descripción + fecha *ngIf="obj.foto"-->
         <ion-item slot="header" class="resultado-header">
-          <ion-thumbnail slot="start" *ngIf="obj.foto">
+          <ion-thumbnail slot="start" >
             <!--<img [src]="environment.apiUrl + '/uploads/fotos/' + obj.foto" -->
-            <img [src]="obj?.foto ? environment.apiUrl + '/uploads/fotos/' + obj.foto : 'assets/no-image.png'"
+            <img [src]="obj?.foto ? environment.apiUrl + '/uploads/fotos/' + obj.foto : 'assets/icon/no-image.png'"
             (error)="onImageError($event)"
             alt="foto objeto" />
           </ion-thumbnail>
           <ion-label>
             <h3>{{ obj.descripcion }}</h3>
+            <p><strong>Tipo:</strong> {{ obj.tipo?.descripcion }}</p>
+            <p><strong>Color:</strong> {{ obj.color?.descripcion }}</p>
             <p>📅 {{ obj.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
-            <small>{{ obj.tipo?.descripcion }} - {{ obj.color?.descripcion }}</small>
+            <!--<small>{{ obj.tipo?.descripcion }} - {{ obj.color?.descripcion }}</small>-->
           </ion-label>
+          <ion-buttons slot="end">
+            <ion-button fill="clear" (click)="goConversacion(obj); $event.stopPropagation()">
+              <ion-img
+                src="assets/icon/sobre.png"
+                class="imagen"
+                alt="mensaje"
+              ></ion-img>
+            </ion-button>
+          </ion-buttons>
         </ion-item>
 
         <!-- CONTENIDO: toda la información -->
         <div slot="content" class="resultado-detalle">
-          <p><strong>ID:</strong> {{ obj.id }}</p>
-          <p><strong>Marca:</strong> {{ obj.marca || '---' }}</p>
-          <p><strong>Serie:</strong> {{ obj.serie || '---' }}</p>
-          <p><strong>Estado:</strong> {{ obj.estado?.descripcion }}</p>
-          <p><strong>Radio búsqueda:</strong> {{ obj.radio }}m</p>
+          <!--<p><strong>ID:</strong> {{ obj.id }}</p>-->
+          <p><strong>Marca:</strong> {{ obj.marca || 'Sin informar' }}</p>
+          <p><strong>Serie:</strong> {{ obj.serie || 'Sin informar' }}</p>
+          <!--<p><strong>Estado:</strong> {{ obj.estado?.descripcion }}</p>-->
+          <!--<p><strong>Radio búsqueda:</strong> {{ obj.radio }}m</p>-->
           <p><strong>Usuario:</strong> {{ obj.usuario?.username }}</p>
-          <p><strong>Ubicación:</strong> 
+          <!--<p><strong>Ubicación:</strong> 
             {{ obj.ubicacion?.latitud }}, {{ obj.ubicacion?.longitud }}
-          </p>
-          <!-- Foto detalle -->
-          <div *ngIf="obj.foto">
-            <!--<img [src]="'https://TU_API_URL/fotos/' + obj.foto" class="detalle-foto" />-->
-            <img [src]="environment.apiUrl + '/uploads/fotos/' + obj.foto" class="detalle-foto" />
+          </p>-->
+          <!-- Foto detalle *ngIf="obj.foto"-->
+          <div >
+            <img [src]="obj?.foto ? environment.apiUrl + '/uploads/fotos/' + obj.foto : 'assets/icon/no-image.png'"
+            (error)="onImageError($event)"
+            alt="foto objeto" />
           </div>
           <!-- Factura si existe -->
-          <div *ngIf="obj.factura">
+          <div *ngIf="obj.factura" class="factura">
             <a [href]="environment.apiUrl + '/uploads/docs/' + obj.factura" target="_blank">📄 Ver factura</a>
           </div>
         </div>

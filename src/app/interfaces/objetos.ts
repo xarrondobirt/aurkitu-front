@@ -18,3 +18,8 @@ export interface ColoresObjeto {
   id: number;
   descripcion: string;
 }
+
+export interface FiltroFecha {
+  label: string;
+  days: number;
+}

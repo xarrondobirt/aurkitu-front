@@ -3,7 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonAccordionGroup } from '@ionic/angular';
 import { environment } from 'src/environments/environment';
 import { ObjetoPerdidoService } from 'src/app/services/objeto-perdido';
-import { TipoObjeto } from 'src/app/interfaces/objetos';
+import { TipoObjeto, FiltroFecha } from 'src/app/interfaces/objetos';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-inventario-objetos',
@@ -20,13 +21,20 @@ export class InventarioObjetosPage implements OnInit {
   tiposObjeto: TipoObjeto[] = [];
   tipoSeleccionadoTexto = "Tipo de objeto";
   objetos: any[] = [];
-
-
+  filtrosFecha: FiltroFecha[] = [
+    { label: 'Últimos 7 días', days: 7 },
+    { label: 'Últimos 30 días', days: 30 },
+    { label: 'Últimos 90 días', days: 90 }
+  ];
+  fechaSeleccionadaTexto = 'Rango de fechas';
+  fechaDesde: string | null = null;
   @ViewChild('tipoAccordion') tipoAccordion!: IonAccordionGroup;
+  @ViewChild('fechaAccordion') fechaAccordion?: IonAccordionGroup;
 
   constructor(
     private fb: FormBuilder,
-    private objetoService: ObjetoPerdidoService
+    private objetoService: ObjetoPerdidoService,
+    private ruta: Router
   ) {}
 
   ngOnInit() {
@@ -36,12 +44,19 @@ export class InventarioObjetosPage implements OnInit {
         longitud: [null, Validators.required]
       }),
       radio: [null, Validators.required],
-      idTipoObjeto: [null]
+      idTipoObjeto: [null],
+      fechaDesde: [null]
     });
 
     this.objetoService.obtenerTiposObjeto().subscribe(tipos => {
       this.tiposObjeto = tipos;
     });
+
+      // ✅ SELECCIÓN POR DEFECTO: ÚLTIMOS 7 DÍAS
+      const filtroPorDefecto = this.filtrosFecha.find(f => f.days === 7);
+      if (filtroPorDefecto) {
+        this.seleccionarFiltroFecha(filtroPorDefecto);
+      }
   }
 
   handleSearchChange(event: any) {
@@ -57,12 +72,34 @@ export class InventarioObjetosPage implements OnInit {
     this.tipoAccordion.value = undefined;
   }
 
+  seleccionarFiltroFecha(filtro: FiltroFecha) {
+    const hoy = new Date();
+    const fechaDesde = new Date(hoy);
+    fechaDesde.setDate(hoy.getDate() - filtro.days);
+
+    // Formato ISO (lo que el back espera normalmente)
+    this.fechaDesde = fechaDesde.toISOString();
+
+    this.formBusqueda.patchValue({
+      fechaDesde: this.fechaDesde
+    });
+
+    this.fechaSeleccionadaTexto = filtro.label;
+
+    if (this.fechaAccordion) {
+    this.fechaAccordion.value = undefined;
+  }
+  }
+
   buscarObjetos() {
   const filtros = {
     ubicacion: this.formBusqueda.value.ubicacion,
     radio: this.formBusqueda.value.radio,
-    tipo: { id: this.formBusqueda.value.idTipoObjeto }
+    tipo: { id: this.formBusqueda.value.idTipoObjeto },
+    fecha: this.formBusqueda.value.fechaDesde
   };
+
+  console.log("Filtros:", filtros);
 
   this.objetoService.buscarObjetos(filtros).subscribe({
     next: (res: any) => {
@@ -96,6 +133,23 @@ export class InventarioObjetosPage implements OnInit {
 
   
   onImageError(event: any) {
-    event.target.src = 'assets/no-image.png';
+    // event.target.src = 'assets/icon/no-image.png';
+    const target = event.target;
+    const fallbackSrc = 'assets/icon/no-image.png';
+
+
+    if (target.src.includes(fallbackSrc) || target.dataset.fallbackApplied) {
+      return;
+    }
+
+    target.dataset.fallbackApplied = 'true';
+    target.src = fallbackSrc;
   }
+
+  goConversacion(obj: any) {
+    console.log('Ir a conversación del objeto:', obj);
+    this.ruta.navigate(['/messages', obj.id]);
+
+  }
+
 }
