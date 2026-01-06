@@ -12,15 +12,24 @@ import { Router } from '@angular/router';
   styleUrls: ['./inventario-objetos.page.scss'],
   standalone: false,
 })
+
 export class InventarioObjetosPage implements OnInit {
 
+  // Formulario
   formBusqueda!: FormGroup;
+
+  // Environment para poder usarlo en el HTML
   public environment = environment;
-  resultados: any[] = [];
+
+  // Búsqueda de objetos perdidos
   busquedaRealizada = false;
-  tiposObjeto: TipoObjeto[] = [];
-  tipoSeleccionadoTexto = "Tipo de objeto";
   objetos: any[] = [];
+
+  // Filtro búsqueda por tipo de objeto
+  tipoSeleccionadoTexto = "Tipo de objeto";
+  tiposObjeto: TipoObjeto[] = [];
+
+  // Filtro búsqueda por fecha de objeto
   filtrosFecha: FiltroFecha[] = [
     { label: 'Últimos 7 días', days: 7 },
     { label: 'Últimos 30 días', days: 30 },
@@ -28,16 +37,21 @@ export class InventarioObjetosPage implements OnInit {
   ];
   fechaSeleccionadaTexto = 'Rango de fechas';
   fechaDesde: string | null = null;
+
+  // Referencias a los acordeones (drop down) para cerrarlos desde el ts
   @ViewChild('tipoAccordion') tipoAccordion!: IonAccordionGroup;
   @ViewChild('fechaAccordion') fechaAccordion?: IonAccordionGroup;
 
+  // Constructor
   constructor(
     private fb: FormBuilder,
     private objetoService: ObjetoPerdidoService,
     private ruta: Router
   ) {}
 
+  // Al iniciar
   ngOnInit() {
+    // Inicialización del formulario
     this.formBusqueda = this.fb.group({
       ubicacion: this.fb.group({
         latitud: [null, Validators.required],
@@ -48,17 +62,19 @@ export class InventarioObjetosPage implements OnInit {
       fechaDesde: [null]
     });
 
+    // Carga de tipos de objetos
     this.objetoService.obtenerTiposObjeto().subscribe(tipos => {
       this.tiposObjeto = tipos;
     });
 
-      // ✅ SELECCIÓN POR DEFECTO: ÚLTIMOS 7 DÍAS
-      const filtroPorDefecto = this.filtrosFecha.find(f => f.days === 7);
-      if (filtroPorDefecto) {
-        this.seleccionarFiltroFecha(filtroPorDefecto);
-      }
+    // Carga de selector de últimos x días. Por defecto últimos 7
+    const filtroPorDefecto = this.filtrosFecha.find(f => f.days === 7);
+    if (filtroPorDefecto) {
+      this.seleccionarFiltroFecha(filtroPorDefecto);
+    }
   }
 
+  // handle captura eventos del mapa
   handleSearchChange(event: any) {
     this.formBusqueda.patchValue({
       ubicacion: { latitud: event.lat, longitud: event.lng },
@@ -66,13 +82,16 @@ export class InventarioObjetosPage implements OnInit {
     });
   }
 
+  // Se ejecuta al seleccionar un tipo en el drop down.
   seleccionarTipo(tipo: TipoObjeto) {
     this.formBusqueda.patchValue({ idTipoObjeto: tipo.id });
     this.tipoSeleccionadoTexto = tipo.descripcion;
     this.tipoAccordion.value = undefined;
   }
 
+  // Calcula la fecha desde hoy hasta el número de días seleccionados 7/30/90
   seleccionarFiltroFecha(filtro: FiltroFecha) {
+    // Cálculo fecha x días anterior
     const hoy = new Date();
     const fechaDesde = new Date(hoy);
     fechaDesde.setDate(hoy.getDate() - filtro.days);
@@ -80,6 +99,7 @@ export class InventarioObjetosPage implements OnInit {
     // Formato ISO (lo que el back espera normalmente)
     this.fechaDesde = fechaDesde.toISOString();
 
+    // Actualización del formulario
     this.formBusqueda.patchValue({
       fechaDesde: this.fechaDesde
     });
@@ -87,57 +107,53 @@ export class InventarioObjetosPage implements OnInit {
     this.fechaSeleccionadaTexto = filtro.label;
 
     if (this.fechaAccordion) {
-    this.fechaAccordion.value = undefined;
-  }
+      this.fechaAccordion.value = undefined;
+    }
   }
 
+  // Búsqueda de objetos que coincidan con los filtros de ubicación, radio, tipo y fecha
   buscarObjetos() {
-  const filtros = {
-    ubicacion: this.formBusqueda.value.ubicacion,
-    radio: this.formBusqueda.value.radio,
-    tipo: { id: this.formBusqueda.value.idTipoObjeto },
-    fecha: this.formBusqueda.value.fechaDesde
-  };
+    // Datos para enviar a back
+    const filtros = {
+      ubicacion: this.formBusqueda.value.ubicacion,
+      radio: this.formBusqueda.value.radio,
+      tipo: { id: this.formBusqueda.value.idTipoObjeto },
+      fecha: this.formBusqueda.value.fechaDesde
+    };
 
-  console.log("Filtros:", filtros);
+    console.log("Filtros:", filtros);
 
-  this.objetoService.buscarObjetos(filtros).subscribe({
-    next: (res: any) => {
-      console.log("Respuesta backend:", res);
+    // Llamada al servicio
+    this.objetoService.buscarObjetos(filtros).subscribe({
+      next: (res: any) => {
+        console.log("Respuesta backend:", res);
 
-      // Normalizamos el resultado
-      if (Array.isArray(res)) {
-        this.objetos = res;
-      } else if (Array.isArray(res.data)) {
-        this.objetos = res.data;
-      } else if (Array.isArray(res.objetos)) {
-        this.objetos = res.objetos;
-      } else {
+        // Normalizamos el resultado
+        if (Array.isArray(res)) {
+          this.objetos = res;
+        } else if (Array.isArray(res.data)) {
+          this.objetos = res.data;
+        } else if (Array.isArray(res.objetos)) {
+          this.objetos = res.objetos;
+        } else {
+          this.objetos = [];
+        }
+
+        this.busquedaRealizada = true;
+      },
+      error: (err) => {
+        console.error("Error:", err);
         this.objetos = [];
       }
-
-      this.busquedaRealizada = true;
-    },
-    error: (err) => {
-      console.error("Error:", err);
-      this.objetos = [];
-    }
-  });
-}
-
-
-  verDetalle(obj: any) {
-    console.log("Ver detalle:", obj);
-    // Aquí puedes navegar a otra página o abrir modal
+    });
   }
 
-  
+  // Carga de imagen por defecto cuando no tenemos ninguna almacenada
   onImageError(event: any) {
-    // event.target.src = 'assets/icon/no-image.png';
     const target = event.target;
     const fallbackSrc = 'assets/icon/no-image.png';
 
-
+    // Evitar bucle al cargar la imagen
     if (target.src.includes(fallbackSrc) || target.dataset.fallbackApplied) {
       return;
     }
@@ -146,9 +162,40 @@ export class InventarioObjetosPage implements OnInit {
     target.src = fallbackSrc;
   }
 
+  // Método para ir a la conversación desde el botón de sobre del objeto
   goConversacion(obj: any) {
-    console.log('Ir a conversación del objeto:', obj);
-    this.ruta.navigate(['/messages', obj.id]);
+    
+    const idUsuario = obj?.usuario?.id;
+    const idObjeto = obj?.id;
+
+    if (!idUsuario || !idObjeto) {
+      console.error('Faltan datos para abrir la conversación', obj);
+      return;
+    }
+
+    // Llamada al servicio
+    this.objetoService.verChat(idUsuario, idObjeto).subscribe({
+      next: (conversacion: any) => {
+        console.log('Conversación recibida:', conversacion);
+
+        this.ruta.navigate(['/messages'], {
+          state: { 
+            conversacion: {
+              ...conversacion,
+              // Normalización para utilización de pantalla de mensajes
+              id: conversacion.id ?? conversacion.idConversacion,
+              participante: {
+                id: idUsuario
+              },
+              idObjeto: idObjeto
+            }
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error al obtener la conversación', err);
+      }
+    });
 
   }
 

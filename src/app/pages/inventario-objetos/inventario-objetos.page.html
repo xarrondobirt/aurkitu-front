@@ -1,4 +1,5 @@
 <ion-content [fullscreen]="true">
+  <!-- TOP BAR -->
   <app-top-bar pagina="inventarioObjetos"></app-top-bar>
 
   <div class="contenido">
@@ -72,21 +73,22 @@
     <ion-accordion-group *ngIf="objetos.length > 0" class="lista-objetos">
       <ion-accordion *ngFor="let obj of objetos" [value]="obj.id">
 
-        <!-- HEADER: Foto + descripción + fecha *ngIf="obj.foto"-->
+        <!-- HEADER-->
         <ion-item slot="header" class="resultado-header">
+          <!-- Imagen -->
           <ion-thumbnail slot="start" >
-            <!--<img [src]="environment.apiUrl + '/uploads/fotos/' + obj.foto" -->
             <img [src]="obj?.foto ? environment.apiUrl + '/uploads/fotos/' + obj.foto : 'assets/icon/no-image.png'"
             (error)="onImageError($event)"
             alt="foto objeto" />
           </ion-thumbnail>
+          <!-- Información -->
           <ion-label>
             <h3>{{ obj.descripcion }}</h3>
             <p><strong>Tipo:</strong> {{ obj.tipo?.descripcion }}</p>
             <p><strong>Color:</strong> {{ obj.color?.descripcion }}</p>
             <p>📅 {{ obj.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
-            <!--<small>{{ obj.tipo?.descripcion }} - {{ obj.color?.descripcion }}</small>-->
           </ion-label>
+          <!-- Mensaje -->
           <ion-buttons slot="end">
             <ion-button fill="clear" (click)="goConversacion(obj); $event.stopPropagation()">
               <ion-img
@@ -98,18 +100,13 @@
           </ion-buttons>
         </ion-item>
 
-        <!-- CONTENIDO: toda la información -->
+        <!-- CONTENIDO -->
         <div slot="content" class="resultado-detalle">
-          <!--<p><strong>ID:</strong> {{ obj.id }}</p>-->
+          <!-- Información -->
           <p><strong>Marca:</strong> {{ obj.marca || 'Sin informar' }}</p>
           <p><strong>Serie:</strong> {{ obj.serie || 'Sin informar' }}</p>
-          <!--<p><strong>Estado:</strong> {{ obj.estado?.descripcion }}</p>-->
-          <!--<p><strong>Radio búsqueda:</strong> {{ obj.radio }}m</p>-->
           <p><strong>Usuario:</strong> {{ obj.usuario?.username }}</p>
-          <!--<p><strong>Ubicación:</strong> 
-            {{ obj.ubicacion?.latitud }}, {{ obj.ubicacion?.longitud }}
-          </p>-->
-          <!-- Foto detalle *ngIf="obj.foto"-->
+          <!-- Foto -->
           <div >
             <img [src]="obj?.foto ? environment.apiUrl + '/uploads/fotos/' + obj.foto : 'assets/icon/no-image.png'"
             (error)="onImageError($event)"

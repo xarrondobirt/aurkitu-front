@@ -87,6 +87,26 @@ export class ObjetoPerdidoService {
 
     return this.httpClient.post(urlBuscarObjetos, filtros,{ headers });
   }
+
+  // GET conversación de un objeto
+  verChat(idUsuario: number, idObjeto: number) {
+    // formamos la URL del endpoint
+    const urlVerChat: string = this.urlAPI + '/ver-chat';
+
+    // tokens
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.tokenService.getAccessToken()
+    });
+
+    // parametros
+    const params = {
+      idUsuario: idUsuario.toString(),
+      idObjeto: idObjeto.toString()
+    };
+
+    return this.httpClient.get(urlVerChat, { headers, params });
+  }
+
   
 
 }
