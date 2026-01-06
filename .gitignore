@@ -1,7 +1,5 @@
 # www and android
 /www
-/android
-/ios
 
 # Angular specific
 /dist/
@@ -35,6 +33,26 @@ yarn-error.log*
 #Archivos de sistema locales de Android
 local.properties
 .gradle/
+
+# CUESTIONES ESPECÍFICAS DE ANDROID
+# /android ... hay permisos específicos en AndroidManifest.xml que hacen que no se pueda ignorar toda la carpeta
+# local.properties contiene rutas locales (rutas del SDK) que no deben compartirse
+android/local.properties
+# .gradle contiene cachés y archivos temporales de Gradle que no deben compartirse
+android/.gradle/
+# build contiene los archivos compilados .class y .dex que no deben compartirse
+android/build/
+# app/build contiene los archivos compilados específicos de la aplicación que no deben compartirse
+android/app/build/
+android/generated/
+# Ficheros generados por Android Studio
+android/.idea/
+android/*.iml
+android/app/*.iml
+android/.DS_Store
+
+# El contenido web compilado que se inyecta en la aplicación nativa (se genera con npx cap sync y ya lo hará el workflow)
+android/app/src/main/assets/public/
 
 #Keystores
 *.jks

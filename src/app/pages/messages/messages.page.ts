@@ -61,10 +61,10 @@ export class MessagesPage implements OnInit {
 
     // llamada al servicio
     this.mensajesService.getMensajesConversacionById(id,request).subscribe({
-      next: (mensajes) => {
-        this.listaMensajes = mensajes;
+      next: (conversacionDetalle) => {
+        this.listaMensajes = conversacionDetalle.mensajes;
 
-        console.log('Mensajes recibidos:', mensajes);
+        console.log('Mensajes recibidos:', conversacionDetalle.mensajes);
         // obtener ambos usuarios de la conversacion
         const usuario = this.listaMensajes.map(u => u.remitente.username).filter(u => u != this.tokensLocal.alias);
         console.log(usuario);

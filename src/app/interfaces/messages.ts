@@ -15,10 +15,12 @@ export interface SesionDTO{
 export interface ConversacionResponse{
     id: number,
     participante: SesionDTO,
+    idObjeto: number,
     tipoObjeto: string,
     createDate: Date,
     lastUpdateDate: Date,
-    mensajesSinLeer: boolean
+    mensajesSinLeer: boolean,
+    btnCerrarCaso: boolean
 }
 
 export interface MensajeDTO{
@@ -35,4 +37,7 @@ export interface SetMensajeRequest{
     contenido: string
 }
 
-
+export interface ConversacionDetalleResponse{
+    idConversacion: number,
+    mensajes: MensajeDTO[]
+}

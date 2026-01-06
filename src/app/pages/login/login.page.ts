@@ -11,14 +11,14 @@ import { AuthenticationService } from 'src/app/services/authentication-service';
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
-  standalone:false,
+  standalone: false,
 })
 
 // Página de login.
 export class LoginPage implements OnInit {
 
   // Inputs del formulario
-  user: string ='';
+  user: string = '';
   password: string = '';
 
   // Formulario
@@ -26,13 +26,13 @@ export class LoginPage implements OnInit {
 
   // Mensaje de error
   errorPassword = {
-    error:{
+    error: {
       message: 'Usuario y/o Contraseña incorrectos'
     }
   };
 
   // Constructor. Inyección de servicios y controladores
-  constructor(private loginService: LoginUsuario, private formBuilder: FormBuilder, private alertController: AlertController, private router: Router, private authenticationService:AuthenticationService) { }
+  constructor(private loginService: LoginUsuario, private formBuilder: FormBuilder, private alertController: AlertController, private router: Router, private authenticationService: AuthenticationService) { }
 
   // Método al iniciar que incluye las validaciones de los inputs del usuario en el formulario
   ngOnInit() {
@@ -40,7 +40,7 @@ export class LoginPage implements OnInit {
       user: ['',
         [
           Validators.required,
-          Validators.pattern('^[a-zA-Z0-9_-]{3,15}$') 
+          Validators.pattern('^[a-zA-Z0-9_-]{3,15}$')
         ]
       ],
       password: ['',
@@ -55,7 +55,7 @@ export class LoginPage implements OnInit {
   // Método asíncrono que recoge los datos necesarios para la request
   async onSubmit() {
     // Recogida de parámetros para la request
-    let request: SetLoginRequest ={
+    let request: SetLoginRequest = {
       username: this.user,
       password: this.password
     };
@@ -64,9 +64,9 @@ export class LoginPage implements OnInit {
     let response: SetLoginResponse;
     console.log(request);
     let responseObservable: Observable<SetLoginResponse> = this.loginService.setUser(request);
-    
+
     // Obtención de datos mediante el observable
-    responseObservable.subscribe(datos =>{
+    responseObservable.subscribe(datos => {
       response = datos;
       console.log(response);
       let tokens: Tokens = {
@@ -78,33 +78,33 @@ export class LoginPage implements OnInit {
       // Alerta login correcto. Se cambiará cuando tengamos la siguiente pantalla
       this.alertaCorrecto();
     },
-    // En caso de error, se muestra una alerta con la información del error como feedback
-    (error) => {
-      console.error('Error', error);
-      this.alertaError(error);
-    }
+      // En caso de error, se muestra una alerta con la información del error como feedback
+      (error) => {
+        console.error('Error', error);
+        this.alertaError(error);
+      }
     );
   }
 
   // TEMP hasta crear siguientes pantallas
-    async alertaCorrecto() {
-      const alert = await this.alertController.create({
-        header: 'Login Correcto',
-        message: 'Has iniciado sesión correctamente',
-        buttons: [
-          {
-            text: 'Aceptar',
-            handler: () => {
-              this.router.navigate(['/menu']);
-            },
+  async alertaCorrecto() {
+    const alert = await this.alertController.create({
+      header: 'Login Correcto',
+      message: 'Has iniciado sesión correctamente',
+      buttons: [
+        {
+          text: 'Aceptar',
+          handler: () => {
+            this.router.navigate(['/menu']);
           },
-        ],
-      });
-  
-      await alert.present();
-    }
+        },
+      ],
+    });
 
-    // método asíncrono que muestra una alerta para mostrar los mensajes de error
+    await alert.present();
+  }
+
+  // método asíncrono que muestra una alerta para mostrar los mensajes de error
   async alertaError(error: any) {
     const alert = await this.alertController.create({
       header: error.error.message,
@@ -116,5 +116,12 @@ export class LoginPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  // Resetear formulario al volver hacia atrás
+  ionViewWillEnter() {
+    this.formularioLogin.reset();
+    this.formularioLogin.markAsPristine();
+    this.formularioLogin.markAsUntouched();
   }
 }

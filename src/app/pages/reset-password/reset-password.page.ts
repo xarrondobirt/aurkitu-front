@@ -32,12 +32,12 @@ export class ResetPasswordPage implements OnInit {
   };
 
   // caracteristicas de la contraseña para mostrar en el tooltip
-  literalesPassword = [
-     '6 caracteres',
-     'Mayúscula y minúscula',
-     'Número',
-     'Carácter especial'
-  ];
+  // literalesPassword = [
+  //    '6 caracteres',
+  //    'Mayúscula y minúscula',
+  //    'Número',
+  //    'Carácter especial'
+  // ];
 
    // inyección de servicios y controladores
   constructor(private resetPass: ForgotPassword, private formBuilder: FormBuilder, private alertController: AlertController,private router: Router) {

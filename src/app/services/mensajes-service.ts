@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
-import { MensajesRequest, ConversacionResponse, SetMensajeRequest, MensajesResponse } from '../interfaces/messages';
+import { MensajesRequest, ConversacionResponse, SetMensajeRequest, MensajesResponse, ConversacionDetalleResponse } from '../interfaces/messages';
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +38,7 @@ export class MensajesService {
     let urlGetMensajes = this.urlAPI + '/conversacion/' + idConversacion + '/mensajes';
     console.log(urlGetMensajes);
     
-    const respuesta = this.httpClient.get<ConversacionResponse[]>(urlGetMensajes, {headers});
+    const respuesta = this.httpClient.get<ConversacionDetalleResponse[]>(urlGetMensajes, {headers});
     return respuesta;
   }
 
@@ -52,6 +52,19 @@ export class MensajesService {
     console.log(urlSetMensaje);
     
     const respuesta = this.httpClient.post<MensajesResponse>(urlSetMensaje, requestMensaje, {headers});
+    return respuesta;
+  }
+
+  // método para cerrar el caso del objeto perdido
+  cerrarCaso(idObjeto: number, request: MensajesRequest): Observable<MensajesResponse>{
+    const headers = new HttpHeaders({
+      Authorization: 'Bearer ' + request.accessToken
+    });
+
+    let urlCerrarCaso = this.urlAPI + '/cerrar-caso/'+ idObjeto;
+    console.log(urlCerrarCaso);
+    
+    const respuesta = this.httpClient.put<MensajesResponse>(urlCerrarCaso, request, {headers});
     return respuesta;
   }
 }

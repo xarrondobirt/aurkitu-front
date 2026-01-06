@@ -27,8 +27,34 @@
 .noConversacion{
     text-align: center;
 }
+
 .titulo{
     font-weight: bold;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .scroll{
+        width: 100%;
+        overflow-x: auto;
+    }
+    
+    .fila{
+        flex-wrap: nowrap; 
+    }
+    
+    .scroll ion-col {
+        flex: 0 0 20%;            
+        max-width: 35%;
+        min-width: 35%;
+    }
+}
+
+    
+.columna{
+    width: 100%;
+    box-sizing: border-box;
 }
 
 ion-row {
@@ -37,4 +63,9 @@ ion-row {
 
 ion-card-title{
     text-align: center;
+}
+
+ion-col{
+    text-align: center;
+    justify-items: center;
 }
