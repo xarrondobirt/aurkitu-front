@@ -13,7 +13,7 @@ import { ToastController, AlertController } from '@ionic/angular';
   standalone: false,
 })
 // página para mostrar las conversaciones del usuario
-export class ConversationsPage implements OnInit {
+export class ConversationsPage {
   // listado de conversaciones para mostrarlas
   listaConversaciones: ConversacionResponse[] = [];
   // tokens en storage
@@ -23,7 +23,7 @@ export class ConversationsPage implements OnInit {
   constructor(private mensajesService: MensajesService, private router: Router,  private authenticationService: AuthenticationService, private alertController: AlertController, private toastController: ToastController) {}
 
   // método que al inicializar obtiene las conversaciones del usuario
-  ngOnInit(){
+  ionViewWillEnter(){
     this.tokensLocal = this.authenticationService.getTokensLocal();
     this.obtenerConversaciones();
   }

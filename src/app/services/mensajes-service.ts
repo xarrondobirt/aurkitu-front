@@ -12,7 +12,7 @@ import { MensajesRequest, ConversacionResponse, SetMensajeRequest, MensajesRespo
 export class MensajesService {
   // url del backend mensaje
   private urlAPI: string = environment.apiUrl + '/v1/mensaje'; 
-  
+
   constructor(private httpClient: HttpClient) { }
 
   // método que devuelve las conversaciones del usuario

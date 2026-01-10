@@ -20,15 +20,15 @@ export class MenuPage implements OnInit{
     this.alias = this.tokenService.getSessionUsername();
   }
 
-  // TODO - método que llevará a la página del registro de un nuevo objeto perdido
+  // método que llevará a la página del registro de un nuevo objeto perdido
   goLostRegister() {
-    // TODO - Ir a registro de objetos perdidos
+    // Ir a registro de objetos perdidos
     this.ruta.navigate(['/new-object']);
   }
 
-  // TODO - método que llevará a la página del catálogo de objetos perdidos registrados
+  // método que llevará a la página del catálogo de objetos perdidos registrados
   goLostCatalog() {
-    // TODO - Ir a objetos perdidos
+    // Ir a objetos perdidos
     this.ruta.navigate(['/inventario-objetos']);
   }
 }

@@ -63,11 +63,12 @@ export class MessagesPage implements OnInit {
     this.mensajesService.getMensajesConversacionById(id,request).subscribe({
       next: (conversacionDetalle) => {
         this.listaMensajes = conversacionDetalle.mensajes;
+        console.log(conversacionDetalle);
 
         console.log('Mensajes recibidos:', conversacionDetalle.mensajes);
         // obtener ambos usuarios de la conversacion
         const usuario = this.listaMensajes.map(u => u.remitente.username).filter(u => u != this.tokensLocal.alias);
-        console.log(usuario);
+        console.log('usuario',usuario);
         // obtener el usuario para indicarlo en el título
         if(usuario != undefined && usuario[0] != null){
           this.alias = usuario[0];

@@ -1,19 +1,35 @@
 <ion-toolbar>
   <ion-buttons slot="start">
     <ion-button>
-      <ion-img src="../assets/icon/logout.png" class="imagen" *ngIf="this.paginaActual.logout" (click)="this.logout()" alt="imagen logout"></ion-img>
+      @if(this.paginaActual.logout){
+        <ion-img src="../assets/icon/logout.png" class="imagen" (click)="this.logout()" alt="imagen logout"/>
+      }
     </ion-button>
     <ion-button>
-      <ion-img src="../assets/icon/flecha.png" class="imagen" *ngIf="this.paginaActual.backarrow" (click)="this.goBack()"/>
+      @if(this.paginaActual.backarrow){
+        <ion-img src="../assets/icon/flecha.png" class="imagen" (click)="this.goBack()"/>
+      }
     </ion-button>
     <ion-button>
-      <ion-img src="../assets/icon/casa.png" class="imagen" *ngIf="this.paginaActual.home" (click)="this.goMenu()" alt="imagen casa menu"></ion-img>
+      @if(this.paginaActual.home){
+        <ion-img src="../assets/icon/casa.png" class="imagen" (click)="this.goMenu()" alt="imagen casa menu"/>
+      }
     </ion-button>
   </ion-buttons>
   <ion-buttons slot="end">
-    <ion-button>
-      <ion-img src="../assets/icon/sobre.png" class="imagen" *ngIf="this.mensajesPendientes == true && this.paginaActual.messages" (click)="this.goConversaciones()" alt="imagen sin mensajes pendientes"></ion-img>
-      <ion-img src="../assets/icon/sobre_notificacion.png" class="imagen"  *ngIf="this.mensajesPendientes == false && this.paginaActual.messages" (click)="this.goConversaciones()" alt="imagen con mensajes pendientes"></ion-img>
-    </ion-button>
+    @if(this.paginaActual.messages == true){
+      
+      @if (!this.mensajesSinLeer){
+        <ion-button>
+          <ion-img src="../assets/icon/sobre.png" class="imagen" (click)="this.goConversaciones()" alt="imagen sin mensajes pendientes"/>
+        </ion-button>
+      }
+        
+      @if (this.mensajesSinLeer == true){
+        <ion-button>
+          <ion-img src="../assets/icon/sobre_notificacion.png" class="imagen" (click)="this.goConversaciones()" alt="imagen con mensajes pendientes"/>
+        </ion-button>
+      }
+    }
   </ion-buttons>
 </ion-toolbar>

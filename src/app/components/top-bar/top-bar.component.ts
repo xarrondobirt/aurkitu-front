@@ -1,8 +1,8 @@
 import { ConversacionResponse, MensajesRequest } from './../../interfaces/messages';
 import { LogoutRequest} from './../../interfaces/users';
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, firstValueFrom, of } from 'rxjs';
+import { catchError, firstValueFrom, Observable, of} from 'rxjs';
 import { AuthenticationService } from 'src/app/services/authentication-service';
 import { LogoutService } from 'src/app/services/logout-service';
 import { MensajesService } from 'src/app/services/mensajes-service';
@@ -15,7 +15,7 @@ interface configuracionPag {
   home: boolean,
   logout: boolean,
   backarrow: boolean,
-  messages: boolean,
+  messages: boolean
 }
 
 @Component({
@@ -26,9 +26,9 @@ interface configuracionPag {
 })
 
 // Componente personalizado y reutilizable que actúa como cabecera. Incluye el acceso a los mensajes del usuario, logout y menú 
-export class TopBarComponent  implements OnInit {
+export class TopBarComponent implements OnInit{
   // variable que guarda el número de mensajes pendientes, para mostrar una imagen u otra
-  mensajesPendientes: boolean = true;
+  mensajesSinLeer: boolean = true;
   // tokens en storage
   tokensLocal: any;
   listaConversacionesPdtes: ConversacionResponse[] = [];
@@ -40,16 +40,28 @@ export class TopBarComponent  implements OnInit {
   paginaActual: any;
 
 
-  constructor(private router: Router, private servicioLogout: LogoutService, private tokenService: TokenService, private mensajesService: MensajesService, private authenticationService: AuthenticationService, private location: Location) { }
+  constructor(private router: Router, private servicioLogout: LogoutService, private tokenService: TokenService, private mensajesService: MensajesService, private authenticationService: AuthenticationService, private location: Location) {}
 
-  ngOnInit() {
+  ngOnInit(){
     // obtener el accesstoken del storage
     this.tokensLocal = this.authenticationService.getTokensLocal();
-
+  
     console.log(this.tokensLocal.accessToken);
 
     // cargar la configuracion de cada pagina
     this.cargarConfiguracion();
+
+    if(this.paginaActual.messages){
+      // obtener los mensajes pendientes
+      this.getMensajesPendientes();
+    }
+  }
+  ngOnChanges(changes: SimpleChanges){
+    console.log(this.pagina);
+    if (changes['pagina'] && this.pagina == 'menu') {
+      this.tokensLocal = this.authenticationService.getTokensLocal();
+      this.getMensajesPendientes();
+    }
   }
 
   // método para cargar la configuracion de cada página respecto a los iconos home, backarrow, logout y mensajes
@@ -81,7 +93,7 @@ export class TopBarComponent  implements OnInit {
       home: homePagina,
       logout: logoutPagina,
       backarrow: backarrowPagina,
-      messages: messagesPagina,
+      messages: messagesPagina
     };
     
     this.configuracionPaginas.push(configPagina);
@@ -98,7 +110,8 @@ export class TopBarComponent  implements OnInit {
     this.mensajesService.getConversaciones(request).subscribe({
       next: (conver) => {
         this.listaConversacionesPdtes = conver;
-        this.mensajesPendientes = this.listaConversacionesPdtes.some(u => u.mensajesSinLeer == true);
+        this.mensajesSinLeer = this.listaConversacionesPdtes.some(u => u.mensajesSinLeer == true);
+        console.log(this.mensajesSinLeer);
         console.log('Conversaciones recibidas:', conver);
       },
       error: (err) => {
