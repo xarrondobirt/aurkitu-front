@@ -23,9 +23,7 @@
         <ion-button>
           <ion-img src="../assets/icon/sobre.png" class="imagen" (click)="this.goConversaciones()" alt="imagen sin mensajes pendientes"/>
         </ion-button>
-      }
-        
-      @if (this.mensajesSinLeer == true){
+      }@else{
         <ion-button>
           <ion-img src="../assets/icon/sobre_notificacion.png" class="imagen" (click)="this.goConversaciones()" alt="imagen con mensajes pendientes"/>
         </ion-button>

@@ -1,14 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { Observable} from 'rxjs';
 import { MensajesRequest, ConversacionResponse, SetMensajeRequest, MensajesResponse, ConversacionDetalleResponse } from '../interfaces/messages';
 
 @Injectable({
   providedIn: 'root',
 })
 
-// servicio para gestionar las conversaciones y los mensajes -- TODO VALIDAR SERVICIO
+// servicio para gestionar las conversaciones y los mensajes
 export class MensajesService {
   // url del backend mensaje
   private urlAPI: string = environment.apiUrl + '/v1/mensaje'; 

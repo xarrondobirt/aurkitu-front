@@ -1,8 +1,8 @@
 import { ConversacionResponse, MensajesRequest } from './../../interfaces/messages';
 import { LogoutRequest} from './../../interfaces/users';
-import { ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { Router } from '@angular/router';
-import { catchError, firstValueFrom, Observable, of} from 'rxjs';
+import { Component, Input, OnInit} from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { catchError, filter, firstValueFrom, Observable, of} from 'rxjs';
 import { AuthenticationService } from 'src/app/services/authentication-service';
 import { LogoutService } from 'src/app/services/logout-service';
 import { MensajesService } from 'src/app/services/mensajes-service';
@@ -38,14 +38,17 @@ export class TopBarComponent implements OnInit{
   configuracionPaginas: configuracionPag[] = [];
   // configuración de la pagina actual
   paginaActual: any;
+  refrescado : boolean = false;
 
 
-  constructor(private router: Router, private servicioLogout: LogoutService, private tokenService: TokenService, private mensajesService: MensajesService, private authenticationService: AuthenticationService, private location: Location) {}
+  constructor(private router: Router, private servicioLogout: LogoutService, private tokenService: TokenService, private mensajesService: MensajesService, private authenticationService: AuthenticationService, private location: Location) {
+    // llamamos al inicializar
+    this.tokensLocal = this.authenticationService.getTokensLocal();
+    this.detectarCambioPaginaCacheado();
+  }
 
   ngOnInit(){
-    // obtener el accesstoken del storage
-    this.tokensLocal = this.authenticationService.getTokensLocal();
-  
+    this.refrescado = false;
     console.log(this.tokensLocal.accessToken);
 
     // cargar la configuracion de cada pagina
@@ -56,17 +59,21 @@ export class TopBarComponent implements OnInit{
       this.getMensajesPendientes();
     }
   }
-  ngOnChanges(changes: SimpleChanges){
-    console.log(this.pagina);
-    if (changes['pagina'] && this.pagina == 'menu') {
-      this.tokensLocal = this.authenticationService.getTokensLocal();
-      this.getMensajesPendientes();
-    }
+
+  // método que detecta el cambio de página. En el caso de la página menú, no se estaba detectando correctamente
+  detectarCambioPaginaCacheado(){
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: NavigationEnd) => {
+      let paginaAct: string = this.router.url.split('/')[1];
+      
+      if(paginaAct != '' && paginaAct == 'menu' && this.paginaActual.nombre == 'menu'){
+        this.tokensLocal = this.authenticationService.getTokensLocal();
+        this.getMensajesPendientes();
+      }
+    });
   }
 
   // método para cargar la configuracion de cada página respecto a los iconos home, backarrow, logout y mensajes
   cargarConfiguracion() {
-
     // cargamos la configuración de cada pantalla
     this.cargarConfiguracionPagina('menu', false, true, false, true);
     this.cargarConfiguracionPagina('conversations', true, false, false, false);
@@ -117,7 +124,8 @@ export class TopBarComponent implements OnInit{
       error: (err) => {
         console.error('Error al obtener conversaciones', err);
 
-        if(err.error.message =='Sesión caducada'){
+        if(err.error.message =='Sesión caducada' && this.refrescado == false){
+          this.refrescado = true;
           // refrescar el token
           this.authenticationService.refrescarToken(this.tokensLocal);
           // volvemos a obtener las conversaciones con el token refrescado
@@ -127,13 +135,12 @@ export class TopBarComponent implements OnInit{
     });
   }
 
-  
+  // método para ir a conversaciones
   goConversaciones() {
     this.router.navigate(['/conversations']);
   }
   // método para cerrar sesión y llevar a la página de login
   async logout() {
-
     // cerrar sesión
     let request: LogoutRequest = {
       accessToken: this.tokensLocal.accessToken
@@ -162,6 +169,7 @@ export class TopBarComponent implements OnInit{
     this.router.navigate(['/menu']);
   }
 
+  // método para ir a la página previa
   goBack(){
     this.location.back();
   }
