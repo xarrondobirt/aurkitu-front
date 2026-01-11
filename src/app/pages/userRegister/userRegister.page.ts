@@ -48,19 +48,19 @@ export class UserRegisterPage {
       alias: ['',
         [
           Validators.required,
-          Validators.pattern('^[a-zA-Z0-9_-]{3,50}$')  // 100 max length en BBDD - Username debe tener entre 3 y 50 caracteres en back
+          Validators.pattern('^[a-zA-Z0-9_-]{3,15}$') 
         ]
       ],
       email: ['',
         [
           Validators.required,
-          Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$') // 100 max length en BBDD
+          Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$') 
         ]
       ],
       password: ['',
         [
           Validators.required,
-          Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{6,}$') // min 6 backend
+          Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{6,}$') 
         ]
       ]
     });
