@@ -185,7 +185,8 @@ export class InventarioObjetosPage implements OnInit {
               // Normalización para utilización de pantalla de mensajes
               id: conversacion.id ?? conversacion.idConversacion,
               participante: {
-                id: idUsuario
+                id: idUsuario,
+                username: obj.usuario?.username,
               },
               idObjeto: idObjeto
             }

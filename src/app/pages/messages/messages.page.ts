@@ -72,6 +72,8 @@ export class MessagesPage implements OnInit {
         // obtener el usuario para indicarlo en el título
         if(usuario != undefined && usuario[0] != null){
           this.alias = usuario[0];
+        }else{
+          this.alias = this.conversacion.participante.username;
         }
          // mostrar los últimos mensajes
         this.scrollFin();

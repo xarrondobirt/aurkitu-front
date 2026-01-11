@@ -8,6 +8,7 @@ import { LogoutService } from 'src/app/services/logout-service';
 import { MensajesService } from 'src/app/services/mensajes-service';
 import { TokenService } from 'src/app/services/token-service';
 import { Location } from '@angular/common';
+import { NavController } from '@ionic/angular';
 
 
 interface configuracionPag {
@@ -41,7 +42,7 @@ export class TopBarComponent implements OnInit{
   refrescado : boolean = false;
 
 
-  constructor(private router: Router, private servicioLogout: LogoutService, private tokenService: TokenService, private mensajesService: MensajesService, private authenticationService: AuthenticationService, private location: Location) {
+  constructor(private router: Router, private servicioLogout: LogoutService, private tokenService: TokenService, private mensajesService: MensajesService, private authenticationService: AuthenticationService, private location: Location, private navigationController: NavController) {
     // llamamos al inicializar
     this.tokensLocal = this.authenticationService.getTokensLocal();
     this.detectarCambioPaginaCacheado();
@@ -160,8 +161,8 @@ export class TopBarComponent implements OnInit{
     // delete access token y refresh token 
     this.authenticationService.deleteTokens();
 
-    // llevar a la página de login
-    this.router.navigate(['/login']);
+    // llevar a la página de login y reseteo navegacion
+    this.navigationController.navigateRoot('/login');
   }
 
   // método que lleva a la página del menú
