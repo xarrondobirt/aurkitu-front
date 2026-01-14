@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RefreshTokenRequest, SetLoginResponse, Tokens } from '../interfaces/users';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { LoginUsuario } from './login-usuario';
 import { TokenService } from './token-service';
 
@@ -24,30 +24,23 @@ export class AuthenticationService {
   }
 
   // método para obtener el refresh token cuando se ha caducado la sesión
-  refrescarToken(tokensLocal: Tokens) {
+  async refrescarToken(tokensLocal: Tokens) {
     let request: RefreshTokenRequest = {
       token: tokensLocal.refreshToken
     }
-    let responseObservable: Observable<SetLoginResponse> = this.loginService.refreshToken(request);
-    let response: SetLoginResponse;
-      // Obtención de datos mediante el observable
-    responseObservable.subscribe(datos =>{
-      response = datos;
-      console.log(response);
+    const response = await firstValueFrom(
+      this.loginService.refreshToken(request)
+    );
+    
+    console.log('Respuesta refresh:', response);
+    let tokens: Tokens = {
+      accessToken: response.accessToken,
+      refreshToken: response.refreshToken,
+      alias: tokensLocal.alias
+    }
+    console.log(tokens);
 
-      let tokens: Tokens = {
-        accessToken: response.accessToken,
-        refreshToken: response.refreshToken,
-        alias: tokensLocal.alias
-      }
-      console.log(tokens);
-
-      this.actualizarTokens(tokens);
-    },
-    // En caso de error, se muestra la información del error como feedback
-    (error) => {
-      console.error('Error', error);
-    });
+    await this.actualizarTokens(tokens);
   }
 
     // método para actualizar los tokens

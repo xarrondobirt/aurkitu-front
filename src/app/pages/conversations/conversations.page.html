@@ -32,8 +32,8 @@
             <ion-col (click)="this.verConversacion(conver)" class="columna"> 
               <ion-label>{{conver.lastUpdateDate | date:'dd/MM/yyyy HH:mm' }}</ion-label>
             </ion-col>
-            <ion-col *ngIf="conver.btnCerrarCaso" class="columna"> 
-              <ion-button (click)="this.cerrarCasoObjeto(conver.idObjeto)">Cerrar caso</ion-button>
+            <ion-col  class="columna"> 
+              <ion-button (click)="this.cerrarCasoObjeto(conver.idObjeto)" *ngIf="conver.btnCerrarCaso">Cerrar caso</ion-button>
             </ion-col>
           </ion-row>
           <!-- si no hay conversaciones, se muestra el siguiente mensaje-->

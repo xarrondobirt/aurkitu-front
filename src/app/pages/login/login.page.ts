@@ -46,7 +46,7 @@ export class LoginPage implements OnInit {
       password: ['',
         [
           Validators.required,
-          Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{6,}$')
+          Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!"#$%&\'()*+,\\-./:;<=>?@[\\\]^_`{|}~]).{6,}$')
         ]
       ]
     });
