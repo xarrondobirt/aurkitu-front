@@ -86,10 +86,10 @@
             <h3>{{ obj.descripcion }}</h3>
             <p><strong>Tipo:</strong> {{ obj.tipo?.descripcion }}</p>
             <p><strong>Color:</strong> {{ obj.color?.descripcion }}</p>
-            <p>📅 {{ obj.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p>📅 {{ obj.fecha | date:'dd/MM/yyyy' }}</p>
           </ion-label>
           <!-- Mensaje -->
-          <ion-buttons slot="end">
+          <ion-buttons slot="end" *ngIf="obj.mostrarChat">
             <ion-button fill="clear" (click)="goConversacion(obj); $event.stopPropagation()">
               <ion-img
                 src="assets/icon/sobre.png"

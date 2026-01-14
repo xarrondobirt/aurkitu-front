@@ -3,8 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertController, IonAccordionGroup, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { ObjetoPerdidoService } from 'src/app/services/objeto-perdido';
-import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
-import { ObjetoPerdidoDTO, TipoObjeto, ColoresObjeto } from 'src/app/interfaces/objetos';
+import { HttpClient} from '@angular/common/http';
+import { ObjetoPerdidoDTO, TipoObjeto, ColoresObjeto} from 'src/app/interfaces/objetos';
+import { AuthenticationService } from 'src/app/services/authentication-service';
+import { switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 
 @Component({
@@ -17,6 +20,10 @@ export class NewObjectPage implements OnInit {
 
   // Formulario de nuevo objeto
   formularioObjeto!: FormGroup;
+
+  // Tokens en storage
+  tokensLocal: any;
+  refrescado: boolean = false;
 
   // Guardan los datos de ubicación que devuelve el mapa
   resultadoBusqueda: any = null;
@@ -33,10 +40,6 @@ export class NewObjectPage implements OnInit {
   @ViewChild('tipoAccordion') tipoAccordion!: IonAccordionGroup;
   @ViewChild('colorAccordion') colorAccordion!: IonAccordionGroup;
 
-  // Mapa
-  //map!: L.Map;
-  //marker!: L.Marker;
-
   // Ficheros
   selectedPhoto: File | null = null;
   selectedDocument: File | null = null;
@@ -45,6 +48,7 @@ export class NewObjectPage implements OnInit {
   // Constructor
   constructor(
     private formBuilder: FormBuilder,
+    private authenticationService: AuthenticationService,
     private objetoService: ObjetoPerdidoService,
     private alertController: AlertController,
     private router: Router,
@@ -54,6 +58,9 @@ export class NewObjectPage implements OnInit {
 
   // Al iniciar
   ngOnInit() {
+
+    // Gestión tokens
+    this.tokensLocal = this.authenticationService.getTokensLocal();
 
     // Fecha hoy por defecto = Hoy
     const hoy = new Date();
@@ -85,8 +92,12 @@ export class NewObjectPage implements OnInit {
       this.colorSeleccionadoTexto = color ? color.descripcion : 'Color';
     });
 
+    // Carga de tipos y colores usando token
+    this.cargarTiposObjeto();
+    this.cargarColoresObjeto();
+/*
     // Cargar datos desde backend de tipos de objeto
-    this.objetoService.obtenerTiposObjeto().subscribe({
+    this.objetoService.obtenerTiposObjeto(this.tokensLocal.accessToken).subscribe({
       next: tipos => {
         this.tiposObjeto = tipos;
         const id = this.formularioObjeto.value.idTipoObjeto;
@@ -95,11 +106,22 @@ export class NewObjectPage implements OnInit {
           this.tipoSeleccionadoTexto = tipo ? tipo.descripcion : 'Tipo de objeto';
         }
       },
-      error: err => console.error('Error cargando tipos de objeto', err)
+      error: err => {
+        console.error('Error cargando tipos de objeto1', err)
+        // Gestión token
+        if (err.error?.status === 401 && !this.refrescado) {
+          console.log("Token tipo");
+          this.refrescado = true;
+          this.authenticationService.refrescarToken(this.tokensLocal);
+          this.ngOnInit(); // reintento
+          return;
+        }
+        console.error('Error cargando tipos de objeto2', err)
+      }
     });
 
     // Cargar datos desde backend de colores de objeto
-    this.objetoService.obtenerColoresObjeto().subscribe({
+    this.objetoService.obtenerColoresObjeto(this.tokensLocal.accessToken).subscribe({
       next: colores => {
         this.coloresObjeto = colores;
         const id = this.formularioObjeto.value.idColor;
@@ -108,8 +130,62 @@ export class NewObjectPage implements OnInit {
           this.colorSeleccionadoTexto = color ? color.descripcion : 'Color';
         }
       },
-      error: err => console.error('Error cargando colores', err)
+      error: err => {
+        console.error('Error cargando colores 1', err)
+        // Gestión token
+        if (err.error?.status === 401 && !this.refrescado) {
+          console.log("Token color");
+          this.refrescado = true;
+          this.authenticationService.refrescarToken(this.tokensLocal);
+          this.ngOnInit(); // reintento
+          return;
+        }
+
+        console.error('Error cargando colores 2', err)
+      }
+    });*/
+  }
+
+  // Carga de tipos y colores usando token
+     private cargarTiposObjeto() {
+    this.objetoService.obtenerTiposObjeto(this.tokensLocal.accessToken).subscribe({
+      next: tipos => {
+        this.tiposObjeto = tipos;
+        const id = this.formularioObjeto.value.idTipoObjeto;
+        if (id) {
+          const tipo = tipos.find(t => t.id === id);
+          this.tipoSeleccionadoTexto = tipo ? tipo.descripcion : 'Tipo de objeto';
+        }
+      },
+      error: err => this.handleTokenError(err, () => this.cargarTiposObjeto())
     });
+  }
+    private cargarColoresObjeto() {
+    this.objetoService.obtenerColoresObjeto(this.tokensLocal.accessToken).subscribe({
+      next: colores => {
+        this.coloresObjeto = colores;
+        const id = this.formularioObjeto.value.idColor;
+        if (id) {
+          const color = colores.find(c => c.id === id);
+          this.colorSeleccionadoTexto = color ? color.descripcion : 'Color';
+        }
+      },
+      error: err => this.handleTokenError(err, () => this.cargarColoresObjeto())
+    });
+  }
+
+    private handleTokenError(err: any, retryFn: () => void) {
+    console.error('Error API:', err);
+    if (err.error?.status === 401 && !this.refrescado) {
+      this.refrescado = true;
+      this.authenticationService.refrescarToken(this.tokensLocal).subscribe({
+        next: nuevosTokens => {
+          this.tokensLocal = nuevosTokens;
+          retryFn(); // reintento con token fresco
+        },
+        error: refreshErr => console.error('Error refrescando token', refreshErr)
+      });
+    }
   }
 
   // handle captura eventos del mapa
@@ -165,14 +241,16 @@ export class NewObjectPage implements OnInit {
     this.isSubmitting = true;
 
     // Envío a back a través del servicio
-    this.objetoService.crearObjetoPerdido(objeto, this.selectedPhoto ?? undefined, this.selectedDocument ?? undefined).subscribe({
+    this.objetoService.crearObjetoPerdido(objeto, this.tokensLocal.accessToken, this.selectedPhoto ?? undefined, this.selectedDocument ?? undefined).subscribe({
       next: () => {
         this.isSubmitting = false;
         this.alertaCorrecto();
       },
       error: (error) => {
         this.isSubmitting = false;
-        this.alertaError(error);
+
+        this.handleTokenError(error, () => this.onSubmit());
+        if (error.error?.status !== 401) this.alertaError(error);
       }
     });
   }
@@ -209,11 +287,4 @@ export class NewObjectPage implements OnInit {
   onDocumentChange(file: File | null) {
     this.selectedDocument = file;
   }
-
-  /*
-  async mostrarToast(msg: string, color: string) {
-    const t = await this.toastCtrl.create({ message: msg, duration: 3000, color });
-    t.present();
-  }
-  */
 }

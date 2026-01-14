@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { ObjetoPerdidoService } from 'src/app/services/objeto-perdido';
 import { TipoObjeto, FiltroFecha } from 'src/app/interfaces/objetos';
 import { Router } from '@angular/router';
+import { AuthenticationService } from 'src/app/services/authentication-service';
 
 @Component({
   selector: 'app-inventario-objetos',
@@ -17,6 +18,10 @@ export class InventarioObjetosPage implements OnInit {
 
   // Formulario
   formBusqueda!: FormGroup;
+
+  // Gestión tokens
+  tokensLocal: any;
+  refrescado: boolean = false;
 
   // Environment para poder usarlo en el HTML
   public environment = environment;
@@ -46,11 +51,15 @@ export class InventarioObjetosPage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private objetoService: ObjetoPerdidoService,
+    private authenticationService: AuthenticationService,
     private ruta: Router
   ) {}
 
   // Al iniciar
   ngOnInit() {
+    // Gestión tokens
+    this.tokensLocal = this.authenticationService.getTokensLocal();
+
     // Inicialización del formulario
     this.formBusqueda = this.fb.group({
       ubicacion: this.fb.group({
@@ -63,8 +72,19 @@ export class InventarioObjetosPage implements OnInit {
     });
 
     // Carga de tipos de objetos
-    this.objetoService.obtenerTiposObjeto().subscribe(tipos => {
-      this.tiposObjeto = tipos;
+    this.objetoService.obtenerTiposObjeto(this.tokensLocal.accessToken).subscribe({
+      next: tipos => {
+        this.tiposObjeto = tipos;
+      },
+      error: err => {
+        if (err.error?.status === 401 && !this.refrescado) {
+          this.refrescado = true;
+          this.authenticationService.refrescarToken(this.tokensLocal);
+          this.ngOnInit(); // reintento
+          return;
+        }
+        console.error('Error cargando tipos de objeto', err);
+      }
     });
 
     // Carga de selector de últimos x días. Por defecto últimos 7
@@ -124,7 +144,7 @@ export class InventarioObjetosPage implements OnInit {
     console.log("Filtros:", filtros);
 
     // Llamada al servicio
-    this.objetoService.buscarObjetos(filtros).subscribe({
+    this.objetoService.buscarObjetos(filtros, this.tokensLocal.accessToken).subscribe({
       next: (res: any) => {
         console.log("Respuesta backend:", res);
 
@@ -142,6 +162,13 @@ export class InventarioObjetosPage implements OnInit {
         this.busquedaRealizada = true;
       },
       error: (err) => {
+        // Gestión tokens
+        if (err.error?.status === 401 && !this.refrescado) {
+          this.refrescado = true;
+          this.authenticationService.refrescarToken(this.tokensLocal);
+          this.buscarObjetos(); // reintento
+          return;
+        }
         console.error("Error:", err);
         this.objetos = [];
       }
@@ -164,6 +191,8 @@ export class InventarioObjetosPage implements OnInit {
 
   // Método para ir a la conversación desde el botón de sobre del objeto
   goConversacion(obj: any) {
+
+    if (!obj.puedeChatear) return; // seguridad 
     
     const idUsuario = obj?.usuario?.id;
     const idObjeto = obj?.id;
@@ -174,7 +203,7 @@ export class InventarioObjetosPage implements OnInit {
     }
 
     // Llamada al servicio
-    this.objetoService.verChat(idUsuario, idObjeto).subscribe({
+    this.objetoService.verChat(idUsuario, idObjeto, this.tokensLocal.accessToken).subscribe({
       next: (conversacion: any) => {
         console.log('Conversación recibida:', conversacion);
 
@@ -194,6 +223,12 @@ export class InventarioObjetosPage implements OnInit {
         });
       },
       error: (err) => {
+        if (err.error?.status === 401 && !this.refrescado) {
+          this.refrescado = true;
+          this.authenticationService.refrescarToken(this.tokensLocal);
+          this.goConversacion(obj); // reintento
+          return;
+        }
         console.error('Error al obtener la conversación', err);
       }
     });
