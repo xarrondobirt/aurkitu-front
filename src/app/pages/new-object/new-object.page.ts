@@ -1,13 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AlertController, IonAccordionGroup, ToastController } from '@ionic/angular';
+import { AlertController, IonAccordionGroup } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { ObjetoPerdidoService } from 'src/app/services/objeto-perdido';
-import { HttpClient} from '@angular/common/http';
+import { MensajesRequest } from 'src/app/interfaces/messages';
 import { ObjetoPerdidoDTO, TipoObjeto, ColoresObjeto} from 'src/app/interfaces/objetos';
 import { AuthenticationService } from 'src/app/services/authentication-service';
-import { switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
 
 
 @Component({
@@ -51,9 +49,7 @@ export class NewObjectPage implements OnInit {
     private authenticationService: AuthenticationService,
     private objetoService: ObjetoPerdidoService,
     private alertController: AlertController,
-    private router: Router,
-    private toastCtrl: ToastController,
-    private http: HttpClient
+    private router: Router
   ) {}
 
   // Al iniciar
@@ -65,6 +61,11 @@ export class NewObjectPage implements OnInit {
     // Fecha hoy por defecto = Hoy
     const hoy = new Date();
     const fechaHoy = hoy.toISOString().split('T')[0]; // formato YYYY-MM-DD
+
+    // Token
+    const request: MensajesRequest = {
+      accessToken: this.tokensLocal.accessToken
+    };
 
     // Campos del formulario y valores por defecto
     this.formularioObjeto = this.formBuilder.group({
@@ -92,12 +93,9 @@ export class NewObjectPage implements OnInit {
       this.colorSeleccionadoTexto = color ? color.descripcion : 'Color';
     });
 
-    // Carga de tipos y colores usando token
-    this.cargarTiposObjeto();
-    this.cargarColoresObjeto();
-/*
+
     // Cargar datos desde backend de tipos de objeto
-    this.objetoService.obtenerTiposObjeto(this.tokensLocal.accessToken).subscribe({
+    this.objetoService.obtenerTiposObjeto().subscribe({
       next: tipos => {
         this.tiposObjeto = tipos;
         const id = this.formularioObjeto.value.idTipoObjeto;
@@ -106,22 +104,24 @@ export class NewObjectPage implements OnInit {
           this.tipoSeleccionadoTexto = tipo ? tipo.descripcion : 'Tipo de objeto';
         }
       },
-      error: err => {
+      error: async (err) => {
         console.error('Error cargando tipos de objeto1', err)
         // Gestión token
-        if (err.error?.status === 401 && !this.refrescado) {
-          console.log("Token tipo");
+        if(err.error.status == 401 && this.refrescado == false){
           this.refrescado = true;
-          this.authenticationService.refrescarToken(this.tokensLocal);
-          this.ngOnInit(); // reintento
-          return;
+          // refrescar el token
+          await this.authenticationService.refrescarToken(this.tokensLocal);
+          this.tokensLocal = this.authenticationService.getTokensLocal();
+          console.log(this.tokensLocal);
+          // volvemos al inicio del método
+          this.ngOnInit();
         }
         console.error('Error cargando tipos de objeto2', err)
       }
     });
 
     // Cargar datos desde backend de colores de objeto
-    this.objetoService.obtenerColoresObjeto(this.tokensLocal.accessToken).subscribe({
+    this.objetoService.obtenerColoresObjeto().subscribe({
       next: colores => {
         this.coloresObjeto = colores;
         const id = this.formularioObjeto.value.idColor;
@@ -130,63 +130,24 @@ export class NewObjectPage implements OnInit {
           this.colorSeleccionadoTexto = color ? color.descripcion : 'Color';
         }
       },
-      error: err => {
+      error: async (err) => {
         console.error('Error cargando colores 1', err)
         // Gestión token
-        if (err.error?.status === 401 && !this.refrescado) {
-          console.log("Token color");
+        if(err.error.status == 401 && this.refrescado == false){
           this.refrescado = true;
-          this.authenticationService.refrescarToken(this.tokensLocal);
-          this.ngOnInit(); // reintento
-          return;
+          // refrescar el token
+          await this.authenticationService.refrescarToken(this.tokensLocal);
+          this.tokensLocal = this.authenticationService.getTokensLocal();
+          console.log(this.tokensLocal);
+          // volvemos al inicio del método
+          this.ngOnInit();
         }
 
         console.error('Error cargando colores 2', err)
       }
-    });*/
-  }
-
-  // Carga de tipos y colores usando token
-     private cargarTiposObjeto() {
-    this.objetoService.obtenerTiposObjeto(this.tokensLocal.accessToken).subscribe({
-      next: tipos => {
-        this.tiposObjeto = tipos;
-        const id = this.formularioObjeto.value.idTipoObjeto;
-        if (id) {
-          const tipo = tipos.find(t => t.id === id);
-          this.tipoSeleccionadoTexto = tipo ? tipo.descripcion : 'Tipo de objeto';
-        }
-      },
-      error: err => this.handleTokenError(err, () => this.cargarTiposObjeto())
-    });
-  }
-    private cargarColoresObjeto() {
-    this.objetoService.obtenerColoresObjeto(this.tokensLocal.accessToken).subscribe({
-      next: colores => {
-        this.coloresObjeto = colores;
-        const id = this.formularioObjeto.value.idColor;
-        if (id) {
-          const color = colores.find(c => c.id === id);
-          this.colorSeleccionadoTexto = color ? color.descripcion : 'Color';
-        }
-      },
-      error: err => this.handleTokenError(err, () => this.cargarColoresObjeto())
     });
   }
 
-    private handleTokenError(err: any, retryFn: () => void) {
-    console.error('Error API:', err);
-    if (err.error?.status === 401 && !this.refrescado) {
-      this.refrescado = true;
-      this.authenticationService.refrescarToken(this.tokensLocal).subscribe({
-        next: nuevosTokens => {
-          this.tokensLocal = nuevosTokens;
-          retryFn(); // reintento con token fresco
-        },
-        error: refreshErr => console.error('Error refrescando token', refreshErr)
-      });
-    }
-  }
 
   // handle captura eventos del mapa
   handleSearchChange(event: any) {
@@ -229,6 +190,11 @@ export class NewObjectPage implements OnInit {
     return;
     }
 
+    // Token
+    const request: MensajesRequest = {
+      accessToken: this.tokensLocal.accessToken
+    };
+
     // Adaptar valores al DTO para el envío a back
     const objeto: ObjetoPerdidoDTO = this.formularioObjeto.value;
     objeto.marca = objeto.marca || '';
@@ -241,16 +207,21 @@ export class NewObjectPage implements OnInit {
     this.isSubmitting = true;
 
     // Envío a back a través del servicio
-    this.objetoService.crearObjetoPerdido(objeto, this.tokensLocal.accessToken, this.selectedPhoto ?? undefined, this.selectedDocument ?? undefined).subscribe({
+    this.objetoService.crearObjetoPerdido(objeto, this.selectedPhoto ?? undefined, this.selectedDocument ?? undefined).subscribe({
       next: () => {
         this.isSubmitting = false;
         this.alertaCorrecto();
       },
-      error: (error) => {
-        this.isSubmitting = false;
-
-        this.handleTokenError(error, () => this.onSubmit());
-        if (error.error?.status !== 401) this.alertaError(error);
+      error: async(err) => {
+        if(err.error.status == 401 && this.refrescado == false){
+          this.refrescado = true;
+          // refrescar el token
+          await this.authenticationService.refrescarToken(this.tokensLocal);
+          this.tokensLocal = this.authenticationService.getTokensLocal();
+          console.log(this.tokensLocal);
+          // volvemos al inicio del método
+          this.onSubmit();
+        }
       }
     });
   }

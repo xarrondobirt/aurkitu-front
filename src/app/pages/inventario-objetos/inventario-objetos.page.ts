@@ -4,6 +4,7 @@ import { IonAccordionGroup } from '@ionic/angular';
 import { environment } from 'src/environments/environment';
 import { ObjetoPerdidoService } from 'src/app/services/objeto-perdido';
 import { TipoObjeto, FiltroFecha } from 'src/app/interfaces/objetos';
+import { MensajesRequest } from 'src/app/interfaces/messages';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication-service';
 
@@ -71,17 +72,25 @@ export class InventarioObjetosPage implements OnInit {
       fechaDesde: [null]
     });
 
+    // Token
+    const request: MensajesRequest = {
+      accessToken: this.tokensLocal.accessToken
+    };
+
     // Carga de tipos de objetos
-    this.objetoService.obtenerTiposObjeto(this.tokensLocal.accessToken).subscribe({
+    this.objetoService.obtenerTiposObjeto().subscribe({
       next: tipos => {
         this.tiposObjeto = tipos;
       },
-      error: err => {
-        if (err.error?.status === 401 && !this.refrescado) {
+      error: async (err) => {
+        if(err.error.status == 401 && this.refrescado == false){
           this.refrescado = true;
-          this.authenticationService.refrescarToken(this.tokensLocal);
-          this.ngOnInit(); // reintento
-          return;
+          // refrescar el token
+          await this.authenticationService.refrescarToken(this.tokensLocal);
+          this.tokensLocal = this.authenticationService.getTokensLocal();
+          console.log(this.tokensLocal);
+          // volvemos al inicio del método
+          this.ngOnInit();
         }
         console.error('Error cargando tipos de objeto', err);
       }
@@ -141,10 +150,15 @@ export class InventarioObjetosPage implements OnInit {
       fecha: this.formBusqueda.value.fechaDesde
     };
 
+    // Token
+    const request: MensajesRequest = {
+      accessToken: this.tokensLocal.accessToken
+    };
+
     console.log("Filtros:", filtros);
 
     // Llamada al servicio
-    this.objetoService.buscarObjetos(filtros, this.tokensLocal.accessToken).subscribe({
+    this.objetoService.buscarObjetos(filtros).subscribe({
       next: (res: any) => {
         console.log("Respuesta backend:", res);
 
@@ -161,18 +175,19 @@ export class InventarioObjetosPage implements OnInit {
 
         this.busquedaRealizada = true;
       },
-      error: (err) => {
-        // Gestión tokens
-        if (err.error?.status === 401 && !this.refrescado) {
+      error: async (err) => {
+        if(err.error.status == 401 && this.refrescado == false){
           this.refrescado = true;
-          this.authenticationService.refrescarToken(this.tokensLocal);
-          this.buscarObjetos(); // reintento
-          return;
-        }
+          // refrescar el token
+          await this.authenticationService.refrescarToken(this.tokensLocal);
+          this.tokensLocal = this.authenticationService.getTokensLocal();
+          console.log(this.tokensLocal);
+          // volvemos al inicio del método
+          this.buscarObjetos();
         console.error("Error:", err);
-        this.objetos = [];
+        this.objetos = [];}
       }
-    });
+    })
   }
 
   // Carga de imagen por defecto cuando no tenemos ninguna almacenada
@@ -197,13 +212,18 @@ export class InventarioObjetosPage implements OnInit {
     const idUsuario = obj?.usuario?.id;
     const idObjeto = obj?.id;
 
+    // Token
+    const request: MensajesRequest = {
+      accessToken: this.tokensLocal.accessToken
+    };
+
     if (!idUsuario || !idObjeto) {
       console.error('Faltan datos para abrir la conversación', obj);
       return;
     }
 
     // Llamada al servicio
-    this.objetoService.verChat(idUsuario, idObjeto, this.tokensLocal.accessToken).subscribe({
+    this.objetoService.verChat(idUsuario, idObjeto).subscribe({
       next: (conversacion: any) => {
         console.log('Conversación recibida:', conversacion);
 
@@ -222,17 +242,18 @@ export class InventarioObjetosPage implements OnInit {
           }
         });
       },
-      error: (err) => {
-        if (err.error?.status === 401 && !this.refrescado) {
+      error: async (err) => {
+        if(err.error.status == 401 && this.refrescado == false){
           this.refrescado = true;
-          this.authenticationService.refrescarToken(this.tokensLocal);
-          this.goConversacion(obj); // reintento
-          return;
+          // refrescar el token
+          await this.authenticationService.refrescarToken(this.tokensLocal);
+          this.tokensLocal = this.authenticationService.getTokensLocal();
+          console.log(this.tokensLocal);
+          // volvemos al inicio del método
+          this.goConversacion(obj);
+          console.error('Error al obtener la conversación', err);
         }
-        console.error('Error al obtener la conversación', err);
       }
     });
-
   }
-
 }
