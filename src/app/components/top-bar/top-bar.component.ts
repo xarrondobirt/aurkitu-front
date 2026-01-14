@@ -122,15 +122,18 @@ export class TopBarComponent implements OnInit{
         console.log(this.mensajesSinLeer);
         console.log('Conversaciones recibidas:', conver);
       },
-      error: (err) => {
+      error: async (err) => {
         console.error('Error al obtener conversaciones', err);
 
         if(err.error.message =='Sesión caducada' && this.refrescado == false){
           this.refrescado = true;
           // refrescar el token
-          this.authenticationService.refrescarToken(this.tokensLocal);
+          await this.authenticationService.refrescarToken(this.tokensLocal);
+          this.tokensLocal = this.authenticationService.getTokensLocal();
+          console.log(this.tokensLocal);
           // volvemos a obtener las conversaciones con el token refrescado
           this.getMensajesPendientes();
+          this.refrescado = false;
         }
       }
     });
@@ -151,9 +154,20 @@ export class TopBarComponent implements OnInit{
 
     const response = await firstValueFrom(
       this.servicioLogout.logout(request).pipe(
-        catchError(error => {
-          console.error(error);
-          return of(null); 
+        catchError( async error => {
+
+          if(error.error.message =='Sesión caducada' && this.refrescado == false){
+            this.refrescado = true;
+            // refrescar el token
+            await this.authenticationService.refrescarToken(this.tokensLocal);
+            this.tokensLocal = this.authenticationService.getTokensLocal();
+            console.log(this.tokensLocal);
+            
+            // volvemos a obtener las conversaciones con el token refrescado
+            this.logout();
+            this.refrescado = false;
+          }
+          return of(null);
         })
       )
     );

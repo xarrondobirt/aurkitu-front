@@ -46,6 +46,8 @@ export class ConversationsPage {
           this.refrescado = true;
           // refrescar el token
           await this.authenticationService.refrescarToken(this.tokensLocal);
+          this.tokensLocal = this.authenticationService.getTokensLocal();
+          console.log(this.tokensLocal);
           // volvemos a obtener las conversaciones con el token refrescado
           this.obtenerConversaciones();
         }
@@ -109,8 +111,17 @@ export class ConversationsPage {
         this.toastCaso(resultado.mensaje);
       },
       // controlar los errores
-      error: (err) => {
-        console.error('Error al obtener mensajes', err);
+      error: async (err) => {
+
+        if(err.error.message =='Sesión caducada' && this.refrescado == false){
+          this.refrescado = true;
+          // refrescar el token
+          await this.authenticationService.refrescarToken(this.tokensLocal);
+          this.tokensLocal = this.authenticationService.getTokensLocal();
+          console.log(this.tokensLocal);
+          // volvemos a obtener las conversaciones con el token refrescado
+          this.cerrarCasoAPI(idObjeto);
+        }
 
       }
     });

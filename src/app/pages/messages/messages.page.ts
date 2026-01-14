@@ -79,13 +79,15 @@ export class MessagesPage implements OnInit {
         this.scrollFin();
       },
       // controlar los errores
-      error: (err) => {
+      error: async (err) => {
         console.error('Error al obtener mensajes', err);
 
         if(err.error.status == 401 && this.refrescado == false){
           this.refrescado = true;
           // refrescar el token
-          this.authenticationService.refrescarToken(this.tokensLocal);
+          await this.authenticationService.refrescarToken(this.tokensLocal);
+          this.tokensLocal = this.authenticationService.getTokensLocal();
+          console.log(this.tokensLocal);
           // volvemos a obtener las conversaciones con el token refrescado
           this.getMensajesConversacion(id);
         }
@@ -116,13 +118,15 @@ export class MessagesPage implements OnInit {
             this.getMensajesConversacion(this.conversacion.id);
             this.mensajeNuevo ='';
           },
-          error: (error) => {
+          error: async (error) => {
             console.error('Error sendMensaje:', error);
             
             if(error.error.status == 401 && this.refrescado == false){
               this.refrescado = true;
               // refrescar el token
-              this.authenticationService.refrescarToken(this.tokensLocal);
+              await this.authenticationService.refrescarToken(this.tokensLocal);
+              this.tokensLocal = this.authenticationService.getTokensLocal();
+              this.enviarMensaje(mensajeEnviar);
             }
           },
         });
