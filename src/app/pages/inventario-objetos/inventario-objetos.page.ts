@@ -207,7 +207,9 @@ export class InventarioObjetosPage implements OnInit {
   // Método para ir a la conversación desde el botón de sobre del objeto
   goConversacion(obj: any) {
 
-    if (!obj.puedeChatear) return; // seguridad 
+    console.log("Entra go");
+
+    if (!obj.mostrarChat) return; // seguridad 
     
     const idUsuario = obj?.usuario?.id;
     const idObjeto = obj?.id;
