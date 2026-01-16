@@ -31,8 +31,8 @@ export class NewObjectPage implements OnInit {
   coloresObjeto: ColoresObjeto[] = [];
 
   // Textos visibles en los accordion (drop down)
-  tipoSeleccionadoTexto = 'Tipo de objeto';
-  colorSeleccionadoTexto = 'Color';
+  tipoSeleccionadoTexto = '(*) Tipo de objeto';
+  colorSeleccionadoTexto = '(*) Color';
 
   // Referencias a los acordeones (drop down) para cerrarlos desde el ts
   @ViewChild('tipoAccordion') tipoAccordion!: IonAccordionGroup;
